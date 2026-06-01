@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { handleAuthMiddleware } from '@/server/auth-middleware';
+import { handleAuthMiddleware } from '@/middlewares/auth'; // Jalur baru yang bersih
 
 export function middleware(request: NextRequest) {
   return handleAuthMiddleware(request);
