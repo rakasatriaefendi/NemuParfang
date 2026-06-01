@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { Container } from '../shared/Container';
+import { ImageWithSkeleton } from '../shared/ImageWithSkeleton';
 
 export const HeroSection = () => {
   // Stagger container definitions
@@ -86,13 +86,14 @@ export const HeroSection = () => {
             <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-700 z-10 pointer-events-none" />
             
             <div className="relative w-full h-full transform transition-transform duration-[12s] ease-out group-hover:scale-105">
-              <Image
+              <ImageWithSkeleton
                 src="/assets/hero-banner.webp"
                 alt="A minimalist composition of a clear perfume bottle resting on a textured beige stone block. Bathed in soft, warm natural sunlight casting subtle shadows."
                 fill
                 priority
                 sizes="(max-w-768px) 100vw, 50vw"
                 className="object-cover object-center"
+                skeletonClassName="bg-[linear-gradient(135deg,#ece6df_0%,#f8f5f1_45%,#dfd4c8_100%)]"
               />
             </div>
 
