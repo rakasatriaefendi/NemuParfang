@@ -15,7 +15,7 @@ export const FeaturedPerfumes = () => {
           {/* Left Column: Fragrance Image */}
           <div className="md:col-span-6 relative aspect-[4/5] rounded-2xl overflow-hidden shadow-lg bg-parfang-surface group">
             <Image
-              src="/assets/fragrance-notes-visual.png"
+              src="/assets/fragrance-notes-visual.webp"
               alt="Amber Veil Luxury decanter resting on raw elements like amber resin and dried lavender petals, bathed in warm sunset shadows."
               fill
               sizes="(max-w-768px) 100vw, 50vw"

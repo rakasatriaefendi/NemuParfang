@@ -14,7 +14,7 @@ export const GuidePreview = () => {
       title: 'The Art of Layering: How to Combine Fragrances',
       category: 'Olfactory Tips',
       date: 'May 24, 2026',
-      img: '/assets/about-brand-story.png',
+      img: '/assets/about-brand-story.webp',
       desc: 'Learn how to combine top, middle, and base notes to compile a custom signature scent that is completely unique to you.'
     },
     {
@@ -22,7 +22,7 @@ export const GuidePreview = () => {
       title: 'Decoding Sillage: The Science of Scent Trail',
       category: 'Fragrance Science',
       date: 'May 10, 2026',
-      img: '/assets/explore-header.png',
+      img: '/assets/explore-header.webp',
       desc: 'What makes a perfume fill a room versus staying close to your skin? We break down the physics behind sillage and diffusion.'
     }
   ];

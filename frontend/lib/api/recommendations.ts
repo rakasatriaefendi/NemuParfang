@@ -24,7 +24,7 @@ export async function getAiMatch(input: MlMatchRequest): Promise<{
     longevity: 0,
     sillage: 'moderate' as const,
     description: `A curated match for your ${input.style} profile with ${input.preferred_accords.join(', ')} accords.`,
-    imageUrl: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/perfume-placeholder.webp',
     rating: item.rating,
     reviewCount: item.review_count,
     matchScore: toPercentage(item.match_score),

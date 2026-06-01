@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Briefcase, Sun, Heart, Award, Flame } from 'lucide-react';
@@ -15,10 +16,10 @@ export const OccasionSection = () => {
   };
 
   const standardOccasions = [
-    { name: 'Daily Wear', icon: <Sun className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-casual.png' },
-    { name: 'Date Night', icon: <Heart className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-date-night.png' },
-    { name: 'Formal Event', icon: <Award className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-formal.png' },
-    { name: 'Sport / Gym', icon: <Flame className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-hot-water.png' },
+    { name: 'Daily Wear', icon: <Sun className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-casual.webp' },
+    { name: 'Date Night', icon: <Heart className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-date-night.webp' },
+    { name: 'Formal Event', icon: <Award className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-formal.webp' },
+    { name: 'Sport / Gym', icon: <Flame className="w-8 h-8 text-parfang-accent mb-3 group-hover:scale-110 transition-transform duration-300" />, bg: '/assets/occasion-hot-water.webp' },
   ];
 
   return (
@@ -40,10 +41,15 @@ export const OccasionSection = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent z-10" />
             
             {/* Background image */}
-            <div
-              className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
-              style={{ backgroundImage: "url('/assets/occasion-office.png')" }}
-            />
+            <div className="absolute inset-0">
+              <Image
+                src="/assets/occasion-office.webp"
+                alt="Work / Office fragrance mood"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
             
             <div className="relative z-20 flex flex-col items-start text-left">
               <Briefcase className="w-6 h-6 text-parfang-accent mb-3" />
@@ -65,10 +71,15 @@ export const OccasionSection = () => {
               className="scent-card rounded-2xl p-6 flex flex-col items-center justify-center min-h-[150px] md:min-h-[180px] text-center cursor-pointer group bg-parfang-surface relative overflow-hidden"
             >
               {/* Subtle background scale effect */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center opacity-10 group-hover:opacity-20 group-hover:scale-105 transition-all duration-500 pointer-events-none"
-                style={{ backgroundImage: `url('${occ.bg}')` }}
-              />
+              <div className="absolute inset-0 pointer-events-none">
+                <Image
+                  src={occ.bg}
+                  alt={`${occ.name} mood background`}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover object-center opacity-10 group-hover:opacity-20 group-hover:scale-105 transition-all duration-500"
+                />
+              </div>
               <div className="relative z-10 flex flex-col items-center">
                 {occ.icon}
                 <h3 className="font-nav text-xs uppercase tracking-wider text-parfang-text font-semibold group-hover:text-parfang-accent transition-colors duration-300">

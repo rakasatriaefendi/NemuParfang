@@ -45,7 +45,7 @@ export const PerfumeCard: React.FC<PerfumeCardProps> = ({
             )}
           >
             <Image
-              src={perfume.imageUrl || '/assets/perfume-placeholder.png'}
+              src={perfume.imageUrl || '/assets/perfume-placeholder.webp'}
               alt={perfume.name}
               fill
               sizes="(max-w-768px) 100vw, 30vw"

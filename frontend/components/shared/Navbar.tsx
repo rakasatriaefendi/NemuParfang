@@ -64,10 +64,10 @@ export const Navbar = () => {
   ];
 
   const megaMenuCategories = [
-    { name: 'Woody', desc: 'Sandalwood, Cedar, Oud', img: '/assets/occasion-office.png', href: '/explore?note=Woody' },
-    { name: 'Fresh', desc: 'Bergamot, Neroli, Mint', img: '/assets/occasion-casual.png', href: '/explore?note=Citrus' },
-    { name: 'Floral', desc: 'Damask Rose, Jasmine', img: '/assets/occasion-date-night.png', href: '/explore?note=Floral' },
-    { name: 'Oriental', desc: 'Vanilla, Amber, Spices', img: '/assets/weather-cool-night.png', href: '/explore?note=Amber' },
+    { name: 'Woody', desc: 'Sandalwood, Cedar, Oud', img: '/assets/occasion-office.webp', href: '/explore?note=Woody' },
+    { name: 'Fresh', desc: 'Bergamot, Neroli, Mint', img: '/assets/occasion-casual.webp', href: '/explore?note=Citrus' },
+    { name: 'Floral', desc: 'Damask Rose, Jasmine', img: '/assets/occasion-date-night.webp', href: '/explore?note=Floral' },
+    { name: 'Oriental', desc: 'Vanilla, Amber, Spices', img: '/assets/weather-cool-night.webp', href: '/explore?note=Amber' },
   ];
 
   return (
@@ -79,48 +79,44 @@ export const Navbar = () => {
           : 'bg-parfang-bg border-transparent py-0'
       )}
     >
-      {/* 1. Thin Top Bar (Only visible when not scrolled) */}
-      <AnimatePresence>
-        {!isScrolled && (
-          <motion.div
-            initial={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-full bg-[#1C1B1A] text-[#FBFBFA] py-2 text-[11px] font-nav uppercase tracking-widest hidden md:block border-b border-white/5"
-          >
-            <Container className="flex justify-between items-center">
-              <div>Skip the sniff, just click and pick!</div>
-              <div className="flex gap-6 items-center">
-                {session ? (
-                  <>
-                    <Link href="/favorites" className="hover:text-parfang-accent transition-colors flex items-center gap-1">
-                      <Heart className="w-3 h-3" /> Favorites
-                    </Link>
-                    <span>|</span>
-                    <Link href="/wardrobe" className="hover:text-parfang-accent transition-colors">
-                      My Wardrobe
-                    </Link>
-                    <span>|</span>
-                    <Link href="/profile" className="hover:text-parfang-accent transition-colors">
-                      {displayName}
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/register" className="hover:text-parfang-accent transition-colors">
-                      Register
-                    </Link>
-                    <span>|</span>
-                    <Link href="/login" className="hover:text-parfang-accent transition-colors">
-                      Login
-                    </Link>
-                  </>
-                )}
-              </div>
-            </Container>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* 1. Thin Top Bar */}
+      <motion.div
+        initial={false}
+        animate={isScrolled ? { height: 0, opacity: 0 } : { height: 33, opacity: 1 }}
+        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+        className="hidden overflow-hidden border-b border-white/5 bg-[#1C1B1A] text-[#FBFBFA] md:block"
+      >
+        <Container className="flex h-8 items-center justify-between text-[11px] font-nav uppercase tracking-widest">
+          <div>Skip the sniff, just click and pick!</div>
+          <div className="flex gap-6 items-center">
+            {session ? (
+              <>
+                <Link href="/favorites" className="hover:text-parfang-accent transition-colors flex items-center gap-1">
+                  <Heart className="w-3 h-3" /> Favorites
+                </Link>
+                <span>|</span>
+                <Link href="/wardrobe" className="hover:text-parfang-accent transition-colors">
+                  My Wardrobe
+                </Link>
+                <span>|</span>
+                <Link href="/profile" className="hover:text-parfang-accent transition-colors">
+                  {displayName}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/register" className="hover:text-parfang-accent transition-colors">
+                  Register
+                </Link>
+                <span>|</span>
+                <Link href="/login" className="hover:text-parfang-accent transition-colors">
+                  Login
+                </Link>
+              </>
+            )}
+          </div>
+        </Container>
+      </motion.div>
 
       {/* 2. Middle Layer (Logo & Search) - Condensed on scroll */}
       <Container className="relative">

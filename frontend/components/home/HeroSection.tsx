@@ -87,7 +87,7 @@ export const HeroSection = () => {
             
             <div className="relative w-full h-full transform transition-transform duration-[12s] ease-out group-hover:scale-105">
               <Image
-                src="/assets/hero-banner.png"
+                src="/assets/hero-banner.webp"
                 alt="A minimalist composition of a clear perfume bottle resting on a textured beige stone block. Bathed in soft, warm natural sunlight casting subtle shadows."
                 fill
                 priority

@@ -5,7 +5,6 @@ export const MOCK_REVIEWS: Record<string, Review[]> = {
     {
       id: 'rev-1',
       userName: 'Aline R.',
-      userAvatar: '/assets/avatar-placeholder.png',
       rating: 5,
       content: 'Absolutely breathtaking. The transition from vanilla to musk is incredibly smooth and holds on the skin for over 9 hours.',
       sentiment: 'positive',
@@ -14,7 +13,6 @@ export const MOCK_REVIEWS: Record<string, Review[]> = {
     {
       id: 'rev-2',
       userName: 'Julian K.',
-      userAvatar: '/assets/avatar-placeholder.png',
       rating: 4,
       content: 'A perfect autumn and winter evening scent. It leaves a very elegant amber trail, though it might be a bit heavy for the office.',
       sentiment: 'positive',
@@ -25,7 +23,6 @@ export const MOCK_REVIEWS: Record<string, Review[]> = {
     {
       id: 'rev-3',
       userName: 'Sarah M.',
-      userAvatar: '/assets/avatar-placeholder.png',
       rating: 5,
       content: 'This smells exactly like a fresh garden in the morning. The orange blossom and lemon combination is incredibly refreshing.',
       sentiment: 'positive',
@@ -36,7 +33,6 @@ export const MOCK_REVIEWS: Record<string, Review[]> = {
     {
       id: 'rev-4',
       userName: 'Dimitri V.',
-      userAvatar: '/assets/avatar-placeholder.png',
       rating: 5,
       content: 'Very mysterious and dark. The leather and cinnamon notes blend together beautifully. Highly recommended for formal events.',
       sentiment: 'positive',
@@ -66,8 +62,8 @@ export const MOCK_PERFUMES: Perfume[] = [
     longevity: 9,
     sillage: 'strong',
     description: 'A seamless blend of warm resin and soft musk. It opens with a whisper of fresh bergamot and lemon, before settling into a deep, comforting heart of spiced cardamom and rose, and finally resting on a velvety base of amber, vanilla, and white musk.',
-    imageUrl: '/assets/fragrance-notes-visual.png', // The primary still life image
-    imageUrlSecondary: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/fragrance-notes-visual.webp', // The primary still life image
+    imageUrlSecondary: '/assets/perfume-placeholder.webp',
     rating: 4.8,
     reviewCount: 24
   },
@@ -91,8 +87,8 @@ export const MOCK_PERFUMES: Perfume[] = [
     longevity: 6,
     sillage: 'moderate',
     description: 'Crisp, uplifting, citrus start. Captured at the break of dawn, Morning Fresh brings a bright, airy wave of fresh lemons and dewy grapefruit leaves. The heart is filled with fresh orange blossom and neroli, settling into clean vetiver and white musk.',
-    imageUrl: '/assets/occasion-casual.png', // Or other morning-related assets
-    imageUrlSecondary: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/occasion-casual.webp', // Or other morning-related assets
+    imageUrlSecondary: '/assets/perfume-placeholder.webp',
     rating: 4.6,
     reviewCount: 18
   },
@@ -116,8 +112,8 @@ export const MOCK_PERFUMES: Perfume[] = [
     longevity: 9,
     sillage: 'strong',
     description: 'Deep, mysterious, formal wear. Night Elegant is designed for the sophisticated hours, blending smoky, dark woods like oud and cedar with rich leather, warm cinnamon, and a sweet, sensual finish of vanilla and amber resin.',
-    imageUrl: '/assets/weather-cool-night.png',
-    imageUrlSecondary: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/weather-cool-night.webp',
+    imageUrlSecondary: '/assets/perfume-placeholder.webp',
     rating: 4.9,
     reviewCount: 32
   },
@@ -141,8 +137,8 @@ export const MOCK_PERFUMES: Perfume[] = [
     longevity: 5,
     sillage: 'moderate',
     description: 'A vibrant burst of sun-drenched lemons and sweet mandarin orange, combined with fresh basil, cooling mint, and a dry-down of earthy patchouli. Perfect for hot summer afternoons or active days.',
-    imageUrl: '/assets/occasion-hot-water.png',
-    imageUrlSecondary: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/occasion-hot-water.webp',
+    imageUrlSecondary: '/assets/perfume-placeholder.webp',
     rating: 4.5,
     reviewCount: 14
   },
@@ -166,8 +162,8 @@ export const MOCK_PERFUMES: Perfume[] = [
     longevity: 8,
     sillage: 'moderate',
     description: 'A dry, creamy, and sophisticated woody scent. Centered around Australian sandalwood and cedarwood, accented by green violet leaves, powdery iris, and a smooth leather dry-down. Very professional and non-intrusive.',
-    imageUrl: '/assets/occasion-office.png',
-    imageUrlSecondary: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/occasion-office.webp',
+    imageUrlSecondary: '/assets/perfume-placeholder.webp',
     rating: 4.7,
     reviewCount: 29
   },
@@ -191,8 +187,8 @@ export const MOCK_PERFUMES: Perfume[] = [
     longevity: 7,
     sillage: 'strong',
     description: 'An elegant, rich rose perfume. It opens with sweet raspberry and spicy pink pepper, unfolding into a magnificent bouquet of Damask rose and peony, anchored by patchouli and white amber.',
-    imageUrl: '/assets/occasion-date-night.png',
-    imageUrlSecondary: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/occasion-date-night.webp',
+    imageUrlSecondary: '/assets/perfume-placeholder.webp',
     rating: 4.6,
     reviewCount: 22
   },
@@ -216,8 +212,8 @@ export const MOCK_PERFUMES: Perfume[] = [
     longevity: 6,
     sillage: 'moderate',
     description: 'An energizing fragrance that blends sharp grapefruit and ginger with refreshing sea water accords, finished by masculine cedarwood and salty ambergris. Clean, fresh, and motivating.',
-    imageUrl: '/assets/occasion-formal.png',
-    imageUrlSecondary: '/assets/perfume-placeholder.png',
+    imageUrl: '/assets/occasion-formal.webp',
+    imageUrlSecondary: '/assets/perfume-placeholder.webp',
     rating: 4.4,
     reviewCount: 11
   }

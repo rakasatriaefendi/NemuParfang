@@ -4,11 +4,11 @@ import { CatalogPerfume, CatalogResponse, Perfume, SupabasePerfumeRow } from '..
 import { hasSupabasePublicConfig, supabaseRest } from '../supabase';
 
 const fallbackImages = [
-  '/assets/perfume-placeholder.png',
-  '/assets/fragrance-notes-visual.png',
-  '/assets/occasion-casual.png',
-  '/assets/occasion-date-night.png',
-  '/assets/weather-cool-night.png',
+  '/assets/perfume-placeholder.webp',
+  '/assets/fragrance-notes-visual.webp',
+  '/assets/occasion-casual.webp',
+  '/assets/occasion-date-night.webp',
+  '/assets/weather-cool-night.webp',
 ];
 
 const genderMap = (gender: string): Perfume['gender'] => {

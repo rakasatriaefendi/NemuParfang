@@ -105,7 +105,7 @@ const ExplorePageContent = () => {
       {/* 1. Header Banner */}
       <div className="relative h-48 md:h-64 bg-parfang-surface border-b border-parfang-border/50 overflow-hidden flex items-center mb-10">
         <Image
-          src="/assets/explore-header.png"
+          src="/assets/explore-header.webp"
           alt="Luxury fragrance catalog"
           fill
           priority
@@ -279,7 +279,7 @@ const ExplorePageContent = () => {
               <div className="py-16 bg-parfang-surface border border-parfang-border rounded-2xl p-10 text-center flex flex-col items-center gap-6">
                 <div className="relative w-48 h-48 opacity-80">
                   <Image
-                    src="/assets/empty-no-results.png"
+                    src="/assets/empty-no-results.webp"
                     alt="No fragrances match search criteria"
                     fill
                     className="object-contain"

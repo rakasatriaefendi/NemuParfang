@@ -14,7 +14,7 @@ export const WeatherRecommendation = () => {
       id: 'morning-fresh',
       title: 'Morning Fresh',
       desc: 'Crisp, uplifting, citrus start.',
-      img: '/assets/occasion-casual.png',
+      img: '/assets/occasion-casual.webp',
       icon: <Sun className="w-6 h-6 text-parfang-accent" />,
       tag: 'Morning / Warm Day'
     },
@@ -22,7 +22,7 @@ export const WeatherRecommendation = () => {
       id: 'night-elegant',
       title: 'Night Elegant',
       desc: 'Deep, mysterious, formal wear.',
-      img: '/assets/weather-cool-night.png',
+      img: '/assets/weather-cool-night.webp',
       icon: <Moon className="w-6 h-6 text-parfang-accent" />,
       tag: 'Evening / Cool Night'
     },
@@ -30,7 +30,7 @@ export const WeatherRecommendation = () => {
       id: 'citrus-breeze',
       title: 'High Heat',
       desc: 'Aquatic and citrus focused.',
-      img: '/assets/occasion-hot-water.png',
+      img: '/assets/occasion-hot-water.webp',
       icon: <Thermometer className="w-6 h-6 text-parfang-accent" />,
       tag: 'Hot Summer / Active'
     },
@@ -38,7 +38,7 @@ export const WeatherRecommendation = () => {
       id: 'sandalwood-sublime',
       title: 'Winter Comfort',
       desc: 'Warm spices and heavy woods.',
-      img: '/assets/occasion-office.png',
+      img: '/assets/occasion-office.webp',
       icon: <CloudSnow className="w-6 h-6 text-parfang-accent" />,
       tag: 'Cold Weather / Fall'
     }

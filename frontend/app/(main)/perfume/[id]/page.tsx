@@ -258,8 +258,12 @@ export default function PerfumeDetailPage() {
                   <div key={rev.id} className="bg-parfang-surface border border-parfang-border/50 p-6 rounded-xl shadow-sm">
                     <div className="flex justify-between items-center mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="relative w-8 h-8 rounded-full overflow-hidden bg-parfang-bg">
-                          <Image src={rev.userAvatar || '/assets/avatar-placeholder.png'} alt={rev.userName} fill className="object-cover" />
+                        <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-parfang-bg text-[10px] font-nav uppercase tracking-widest text-parfang-muted">
+                          {rev.userAvatar ? (
+                            <Image src={rev.userAvatar} alt={rev.userName} fill className="object-cover" />
+                          ) : (
+                            rev.userName.slice(0, 2)
+                          )}
                         </div>
                         <div>
                           <span className="font-body text-xs font-semibold text-parfang-text block">{rev.userName}</span>
