@@ -1,0 +1,77 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.*
+HF.txt
+account.txt
+desainfromstitch
+NemuParfangAssetsImage
+last_checkpoint.txt
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+env/
+# TypeScript cache
+*.tsbuildinfo
+
+# Zip files
+*.zip
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+
+# Local ML training outputs and artifacts
+ml_training_notebooks/.env
+ml_training_notebooks/data/raw/*
+!ml_training_notebooks/data/raw/.gitkeep
+ml_training_notebooks/data/interim/*
+!ml_training_notebooks/data/interim/.gitkeep
+ml_training_notebooks/data/processed/*
+!ml_training_notebooks/data/processed/.gitkeep
+ml_training_notebooks/artifacts/*
+!ml_training_notebooks/artifacts/.gitkeep
+ml_training_notebooks/outputs/models/*
+!ml_training_notebooks/outputs/models/.gitkeep
+ml_training_notebooks/outputs/figures/*
+!ml_training_notebooks/outputs/figures/.gitkeep
+ml_training_notebooks/outputs/reports/*
+!ml_training_notebooks/outputs/reports/.gitkeep
+
+# Hugging Face Spaces deployment repo/folder
+nemuparfang-api/
+nemuparfang-api/

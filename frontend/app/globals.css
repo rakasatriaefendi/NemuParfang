@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Josefin+Sans:wght@400;600;700&family=Shadows+Into+Light&family=Poppins:wght@400;500;700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: var(--parfang-bg);
+    color: var(--parfang-text);
+  }
+}
+
+:root {
+  --parfang-bg:           #FBFBFA;
+  --parfang-surface:      #FFFFFF;
+  --parfang-text:         #1C1B1A;
+  --parfang-accent:       #B89775;
+  --parfang-accent-light: #D4B896;
+  --parfang-accent-dark:  #9A7D5E;
+  --parfang-muted:        #787470;
+  --parfang-border:       #E8E4DF;
+  --parfang-overlay:      rgba(28, 27, 26, 0.55);
+  --parfang-glow:         rgba(184, 151, 117, 0.15);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(241, 240, 238, 0.5);
+}
+
+.scent-card {
+  background: #FFFFFF;
+  border: 1px solid #F1F0EE;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scent-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 40px 60px rgba(184, 151, 117, 0.05);
+}
+
+.nav-underline {
+  position: relative;
+}
+
+.nav-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #B89775;
+  transition: all 0.3s ease;
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.nav-underline:hover::after, .nav-underline.active::after {
+  width: 100%;
+}
+
+.chip {
+  background-color: #FBFBFA;
+  color: #787470;
+  transition: all 0.3s ease;
+}
+
+.chip:hover {
+  background-color: #f1f0ee;
+  transform: scale(1.05);
+}

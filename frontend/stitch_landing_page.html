@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NemuParfang - The Essence of Editorial Discovery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Inter:wght@100..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#5b4226",
+                        "surface-container": "#eeeeed",
+                        "on-secondary-fixed": "#1c1b1a",
+                        "surface-container-low": "#f3f4f3",
+                        "secondary-container": "#e6e2df",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#75593b",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e8e1dc",
+                        "inverse-primary": "#e4c09c",
+                        "outline": "#80756b",
+                        "on-secondary-container": "#666462",
+                        "tertiary-fixed-dim": "#cbc5c1",
+                        "primary": "#75593b",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2f3130",
+                        "primary-fixed": "#ffddbb",
+                        "secondary": "#605e5c",
+                        "on-tertiary-container": "#373431",
+                        "surface-dim": "#dadad9",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#a19c98",
+                        "outline-variant": "#d2c4b8",
+                        "on-tertiary-fixed-variant": "#494643",
+                        "surface-container-high": "#e8e8e7",
+                        "inverse-on-surface": "#f1f1f0",
+                        "surface": "#f9f9f8",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e6e2df",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "background": "#f9f9f8",
+                        "on-primary-container": "#463016",
+                        "on-surface": "#1a1c1c",
+                        "on-background": "#1a1c1c",
+                        "secondary-fixed-dim": "#cac6c4",
+                        "surface-variant": "#e2e2e2",
+                        "on-surface-variant": "#4e453c",
+                        "on-tertiary-fixed": "#1d1b18",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9f8",
+                        "on-primary-fixed": "#2a1702",
+                        "on-secondary-fixed-variant": "#484645",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#615e5a",
+                        "primary-fixed-dim": "#e4c09c",
+                        "primary-container": "#b89775"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap-mobile": "64px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "section-gap-desktop": "120px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "nav-link": ["Plus Jakarta Sans"],
+                        "headline-md": ["EB Garamond"],
+                        "headline-sm": ["EB Garamond"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["EB Garamond"],
+                        "display-lg": ["EB Garamond"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "nav-link": ["14px", { "lineHeight": "1.0", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #FBFBFA; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(241, 240, 238, 0.5);
+        }
+        .scent-card {
+            background: #FFFFFF;
+            border: 1px solid #F1F0EE;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .scent-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 40px 60px rgba(184, 151, 117, 0.05);
+        }
+        .nav-underline {
+            position: relative;
+        }
+        .nav-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: #B89775;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-underline:hover::after, .nav-underline.active::after {
+            width: 100%;
+        }
+        .chip {
+            background-color: #FBFBFA;
+            color: #787470;
+            transition: all 0.3s ease;
+        }
+        .chip:hover {
+            background-color: #f1f0ee;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased font-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-[0_20px_50px_rgba(184,151,117,0.05)] border-b border-outline-variant/10">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-gutter max-w-container-max mx-auto h-20">
+<!-- Brand Logo -->
+<a class="flex items-center gap-2 hover:scale-[1.02] transition-transform duration-300" href="#">
+<img alt="NemuParfang Logo" class="h-8 object-contain" src="data:image/png;base64,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"/>
+<span class="font-headline-md text-headline-md text-primary tracking-tight hidden md:block">NemuParfang</span>
+</a>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-nav-link text-nav-link text-primary border-b-2 border-primary pb-1 transition-all duration-300" href="#">Home</a>
+<a class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary nav-underline transition-colors duration-300" href="#">Explore</a>
+<a class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary nav-underline transition-colors duration-300" href="#">Occasion</a>
+<a class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary nav-underline transition-colors duration-300" href="#">Notes Library</a>
+<a class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary nav-underline transition-colors duration-300" href="#">Articles</a>
+</nav>
+<!-- Trailing Action -->
+<div class="flex items-center gap-4">
+<button class="hidden md:block bg-primary-container text-on-primary px-6 py-2 rounded-full font-nav-link text-nav-link hover:bg-primary transition-colors duration-300 active:scale-95">
+                    Start AI Quiz
+                </button>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-24 md:pt-32">
+<!-- Hero Section (Editorial Split) -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter mb-section-gap-mobile md:mb-section-gap-desktop">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center min-h-[70vh]">
+<!-- Left Content -->
+<div class="md:col-span-5 md:col-start-1 flex flex-col justify-center order-2 md:order-1 z-10 pt-10 md:pt-0">
+<span class="font-label-caps text-label-caps text-primary mb-4 uppercase tracking-widest">Perfume Discovery Guide</span>
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-surface mb-6 leading-tight">
+                        Skip the sniff, just click and pick!.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-md">
+                        Navigate the world of fine fragrance with our editorial guide. Discover scents tailored to your moments, weather, and mood without the noise.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+<button class="bg-primary-container text-on-primary px-8 py-3 rounded-full font-nav-link text-nav-link hover:bg-primary transition-all duration-300 w-full sm:w-auto hover:shadow-lg">
+                            Start AI Quiz
+                        </button>
+<button class="bg-transparent border-[1.5px] border-primary-container text-primary-container px-8 py-3 rounded-full font-nav-link text-nav-link hover:bg-primary-container hover:text-on-primary transition-all duration-300 w-full sm:w-auto">
+                            Explore Notes
+                        </button>
+</div>
+</div>
+<!-- Right Image -->
+<div class="md:col-span-6 md:col-start-7 relative order-1 md:order-2 h-[50vh] md:h-[80vh] w-full rounded-2xl overflow-hidden group">
+<div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-700 z-10 pointer-events-none"></div>
+<img alt="A minimalist composition of a clear perfume bottle resting on a textured beige stone block. Dried vanilla pods and lavender sprigs lay beside it, alongside a raw, glowing piece of amber resin. The scene is bathed in soft, warm, natural sunlight casting subtle shadows, creating a pristine, high-end editorial aesthetic." class="w-full h-full object-cover object-center transform transition-transform duration-[20s] ease-out group-hover:scale-105" data-alt="A minimalist composition of a clear perfume bottle resting on a textured beige stone block. Dried vanilla pods and lavender sprigs lay beside it, alongside a raw, glowing piece of amber resin. The scene is bathed in soft, warm, natural sunlight casting subtle shadows, creating a pristine, high-end editorial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpZi5cBCoBtOjjDssqd-q9ihSxB4Wn_TXk-SOGvdvJ7fepT6X5C7qcuvVEJR2hSmLbnwazS1W3sVuaptm-pPo_mJUrXF3_5Xo80zt2tZ6Ctojg_JfwY2L-PGFxDnCexhERRsuuWUJoGWPEV3JERZybrtANBjctizw8KTPzZa4ZqmDJAL5R9onpI2C1-OCFy8PnkpCrIeV1_VJdc2kEv85JlPff6tbndUmkl1EGEoimx2g27F-hJ16IpvLxJ2-GkbqYU2Q6rdb_tqs"/>
+<!-- Floating Card -->
+<div class="absolute bottom-6 left-6 md:bottom-12 md:left-12 glass-card p-6 rounded-xl z-20 max-w-[280px] shadow-lg animate-fade-in-up">
+<p class="font-label-caps text-label-caps text-primary mb-2">Recommended for</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Evening / Cool Weather</h3>
+<div class="flex flex-wrap gap-2">
+<span class="chip px-3 py-1 rounded-full font-label-caps text-[10px]">Amber</span>
+<span class="chip px-3 py-1 rounded-full font-label-caps text-[10px]">Musk</span>
+<span class="chip px-3 py-1 rounded-full font-label-caps text-[10px]">Vanilla</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Quiz Entry -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter mb-section-gap-mobile md:mb-section-gap-desktop">
+<div class="bg-surface-container-low rounded-[2rem] p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 border border-outline-variant/20 shadow-sm relative overflow-hidden">
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="md:w-1/2 z-10">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Let AI match your scent.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-md">
+                        Tell us your typical day, preferred climate, and style. We'll curate a personalized fragrance profile just for you.
+                    </p>
+<button class="bg-primary-container text-on-primary px-8 py-3 rounded-full font-nav-link text-nav-link hover:bg-primary transition-all duration-300 shadow-md hover:shadow-lg">
+                        Start AI Quiz
+                    </button>
+</div>
+<div class="md:w-1/2 flex flex-wrap gap-3 z-10 justify-center md:justify-end">
+<span class="bg-surface px-5 py-2 rounded-full font-nav-link text-nav-link text-on-surface border border-outline-variant/30 shadow-sm">Office</span>
+<span class="bg-surface px-5 py-2 rounded-full font-nav-link text-nav-link text-on-surface border border-outline-variant/30 shadow-sm">Hot Weather</span>
+<span class="bg-surface px-5 py-2 rounded-full font-nav-link text-nav-link text-on-surface border border-outline-variant/30 shadow-sm">Fresh</span>
+<span class="bg-surface px-5 py-2 rounded-full font-nav-link text-nav-link text-on-surface border border-outline-variant/30 shadow-sm">Elegant</span>
+</div>
+</div>
+</section>
+<!-- Browse by Occasion (Bento Grid) -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter mb-section-gap-mobile md:mb-section-gap-desktop">
+<div class="flex justify-between items-end mb-10 border-b border-outline-variant/20 pb-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">Curated Occasions</h2>
+<a class="font-label-caps text-label-caps text-primary hover:text-on-primary-fixed-variant transition-colors group flex items-center gap-1" href="#">
+                    View All <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+<!-- Large Card -->
+<div class="col-span-2 md:col-span-2 row-span-2 scent-card rounded-2xl p-8 flex flex-col justify-end min-h-[300px] relative overflow-hidden group cursor-pointer">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+<div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&amp;w=1470&amp;auto=format&amp;fit=crop')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700" data-alt="A modern, minimalist office workspace bathed in bright, soft natural light. Clean lines, a wooden desk, and a subtle potted plant create a serene and focused atmosphere. The style is bright, clean, and airy, evoking a sense of daily professional elegance suitable for an editorial background."></div>
+<div class="relative z-20">
+<h3 class="font-headline-sm text-headline-sm text-white mb-2">Work / Office</h3>
+<p class="font-body-md text-body-md text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0">Subtle, professional, and long-lasting.</p>
+</div>
+</div>
+<!-- Standard Cards -->
+<div class="scent-card rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] text-center cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">wb_sunny</span>
+<h3 class="font-nav-link text-nav-link text-on-surface">Daily Wear</h3>
+</div>
+<div class="scent-card rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] text-center cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">nightlife</span>
+<h3 class="font-nav-link text-nav-link text-on-surface">Date Night</h3>
+</div>
+<div class="scent-card rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] text-center cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">styler</span>
+<h3 class="font-nav-link text-nav-link text-on-surface">Formal Event</h3>
+</div>
+<div class="scent-card rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] text-center cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">sports_gymnastics</span>
+<h3 class="font-nav-link text-nav-link text-on-surface">Sport / Gym</h3>
+</div>
+</div>
+</section>
+<!-- Browse by Notes (Tactile Chips) -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter mb-section-gap-mobile md:mb-section-gap-desktop">
+<div class="text-center mb-10">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-3">Explore by Note</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-lg mx-auto">Build your olfactory vocabulary.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Citrus</button>
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Floral</button>
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Woody</button>
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Vanilla</button>
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Musky</button>
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Spicy</button>
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Amber</button>
+<button class="px-6 py-3 rounded-full border border-outline-variant/50 bg-white hover:border-primary text-on-surface font-nav-link text-nav-link transition-all shadow-sm hover:shadow-md hover:-translate-y-1">Aquatic</button>
+</div>
+</section>
+<!-- Situation Recommendations -->
+<section class="bg-surface-container-low py-section-gap-mobile md:py-section-gap-desktop mb-section-gap-mobile md:mb-section-gap-desktop">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<div class="flex justify-between items-end mb-12">
+<div>
+<span class="font-label-caps text-label-caps text-primary mb-2 block uppercase tracking-widest">Situational</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Scents for the Moment</h2>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="scent-card rounded-xl overflow-hidden group cursor-pointer bg-white">
+<div class="h-64 overflow-hidden">
+<img alt="Morning Fresh Perfume" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A bright, airy shot of a rectangular perfume bottle labeled 'Morning Fresh'. It sits on a white marble surface beside dewy green citrus leaves and delicate white orange blossoms. Bright morning light streams from a background window, creating an uplifting, crisp, and clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvPkRYb5M7C5lI6koFvHZFnbUEeE5aWE1510RHsXnroFwbGo7lJJ56has_vcQzhT_E_3mLJIc5SXlM2ixV_o3wxDTA34bxAI_DKVonfW5SYeIPYyhDg_kbRpjCEfmwGXxZjBXbOCq9INfcP8lrCOncKq29NGdUwG9HeLfcobb7PqX9VWmGhtfYXSu0mYM1SyGzmVOroL7EwtxmxCGYzICz_DFcGvVcJJ--09lcpQ8nZiYEEM6JgtpO8tDE8ERVm4ntvruGbNRPi1Q"/>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Morning Fresh</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm">Crisp, uplifting, citrus start.</p>
+<div class="flex items-center text-primary font-nav-link text-nav-link group-hover:tracking-wider transition-all">
+                                Explore <span class="material-symbols-outlined text-[18px] ml-1">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="scent-card rounded-xl overflow-hidden group cursor-pointer bg-white">
+<div class="h-64 overflow-hidden">
+<img alt="Night Elegant Perfume" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A moody, sophisticated studio shot of an octagonal dark glass perfume bottle named 'Night Elegant'. It rests on a plush, dark velvet surface against a textured charcoal backdrop. Warm, low-key lighting highlights the bronze cap and the rich amber liquid inside, evoking luxury and evening allure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLr8mC9Si2-rWzpxmgIHQJBMZJ-nJoKqQl4zqHujwrxbtfIcuUIU0Ul5OS4s2lNsygkM4qNt8hu9uHhak_aatefGgzVAUNXIA2MLdhqaUZG3CK4Wp5N5gLzwRAPMGrTh0cmIHZ5cUSpr0ab7bN96Hx-LJYd3yu1yBUI0vxOfhI4uT1UIKg7JsOXMue8XDrWVM4HmiymRtQk_HfD6sS3GLrnwNRQCXebTVnNzMV8hnQzTuy96qtRA7gvBRq--MMKNVki1zKk9618Rw"/>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Night Elegant</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm">Deep, mysterious, formal wear.</p>
+<div class="flex items-center text-primary font-nav-link text-nav-link group-hover:tracking-wider transition-all">
+                                Explore <span class="material-symbols-outlined text-[18px] ml-1">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Placeholder Cards -->
+<div class="scent-card rounded-xl overflow-hidden group cursor-pointer bg-white flex flex-col">
+<div class="h-64 bg-surface-variant/30 flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-inverse-primary/20 to-transparent"></div>
+<span class="material-symbols-outlined text-6xl text-primary/40 font-light">device_thermostat</span>
+</div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">High Heat</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm">Aquatic and neroli focused.</p>
+</div>
+</div>
+</div>
+<div class="scent-card rounded-xl overflow-hidden group cursor-pointer bg-white flex flex-col">
+<div class="h-64 bg-surface-variant/30 flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-tint/10 to-transparent"></div>
+<span class="material-symbols-outlined text-6xl text-primary/40 font-light">ac_unit</span>
+</div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Winter Comfort</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-sm">Warm spices and heavy woods.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Perfume (Asymmetric Layout) -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter mb-section-gap-mobile md:mb-section-gap-desktop">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+<div class="md:col-span-6 md:col-start-1 relative">
+<div class="aspect-[4/5] rounded-2xl overflow-hidden">
+<img alt="Amber Veil Perfume" class="w-full h-full object-cover hover:scale-105 transition-transform duration-1000 ease-in-out" data-alt="A luxurious square glass decanter filled with rich, golden amber liquid, engraved with the name 'Amber Veil'. It is set against draped, flowing silk fabric in warm champagne and bronze tones. The lighting is soft and directional, highlighting the liquid's clarity and the sensual texture of the silk in an elegant editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXRhQ7mUa9dkw6v_bVy4WAnYhyaTQzi4XorMXg2xTWTHG4UblOS6DvfYdcuhAAzdYk2-E-WQpRO8U2mSgU1Cw2RcMi5HgQgvI0iEt6eej4exPn_-XGPoQfoGFsRZiC_B-cZmR67rdIvRb3_MElQM-T6ErBeeTSOk6wfxwnldIqr5HADOvAiQZbAn_AiFz30CpzZ8_MaoOEgKZIxHWapMy50rRe40mfY0hg7ZCxt_YqFmoQEFrnuIL37WrsyYs2ZMc1aKNPs3nABog"/>
+</div>
+</div>
+<div class="md:col-span-5 md:col-start-8">
+<span class="font-label-caps text-label-caps text-primary mb-4 block tracking-widest">Featured Profile</span>
+<h2 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-surface mb-2">Amber Veil</h2>
+<p class="font-nav-link text-nav-link text-on-surface-variant mb-6 uppercase tracking-wider">Unisex • Eau de Parfum</p>
+<div class="mb-8 border-l-2 border-primary/20 pl-6 py-2">
+<p class="font-body-lg text-body-lg text-on-surface-variant italic mb-4">
+                            "A seamless blend of warm resin and soft musk. It opens with a whisper of vanilla before settling into a deep, comforting embrace."
+                        </p>
+</div>
+<div class="mb-8">
+<h4 class="font-label-caps text-label-caps text-on-surface mb-3">Key Accords</h4>
+<div class="flex gap-2">
+<span class="chip px-4 py-1.5 rounded-full font-nav-link text-sm">Amber</span>
+<span class="chip px-4 py-1.5 rounded-full font-nav-link text-sm">Vanilla</span>
+<span class="chip px-4 py-1.5 rounded-full font-nav-link text-sm">Musk</span>
+</div>
+</div>
+<div class="mb-10">
+<h4 class="font-label-caps text-label-caps text-on-surface mb-3">Best Suited For</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Evening, Cool Weather, Date Night</p>
+</div>
+<a class="inline-block text-primary font-nav-link text-nav-link uppercase tracking-widest border-b border-primary pb-1 hover:text-on-primary-fixed-variant hover:border-on-primary-fixed-variant transition-colors" href="#">
+                        View Details
+                    </a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-gap-mobile md:py-section-gap-desktop bg-surface-container-low dark:bg-surface-container border-t border-outline-variant/30 dark:border-outline/20">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter px-margin-mobile md:px-gutter max-w-container-max mx-auto">
+<!-- Brand & Description -->
+<div class="md:col-span-4 mb-10 md:mb-0">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim block mb-4">NemuParfang</span>
+<p class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim max-w-sm">
+                    An editorial space dedicated to the art of olfaction. We guide your scent discovery through curated recommendations and minimalist design.
+                </p>
+</div>
+<!-- Links -->
+<div class="md:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
+<div>
+<h4 class="font-label-caps text-label-caps text-primary dark:text-primary-fixed-dim font-semibold mb-6">Explore</h4>
+<ul class="space-y-4">
+<li><a class="font-body-md text-body-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:underline decoration-primary/30 transition-all" href="#">About Us</a></li>
+<li><a class="font-body-md text-body-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:underline decoration-primary/30 transition-all" href="#">Fragrance Journal</a></li>
+<li><a class="font-body-md text-body-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:underline decoration-primary/30 transition-all" href="#">Curated Collections</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-primary dark:text-primary-fixed-dim font-semibold mb-6">Legal</h4>
+<ul class="space-y-4">
+<li><a class="font-body-md text-body-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:underline decoration-primary/30 transition-all" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+<!-- Copyright -->
+<div class="md:col-span-12 mt-16 pt-8 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim text-sm text-center md:text-left">
+                    © 2024 NemuParfang. The Essence of Editorial Discovery.
+                </p>
+<button class="text-primary hover:text-on-primary-fixed-variant transition-colors flex items-center gap-2 text-sm font-label-caps tracking-widest uppercase" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    Back to top <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+</button>
+</div>
+</div>
+</footer>
+</body></html>

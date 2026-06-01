@@ -1,0 +1,120 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Official NemuParfang Palette
+        "parfang-bg": "#FBFBFA",
+        "parfang-surface": "#FFFFFF",
+        "parfang-text": "#1C1B1A",
+        "parfang-accent": "#B89775",
+        "parfang-accent-light": "#D4B896",
+        "parfang-accent-dark": "#9A7D5E",
+        "parfang-muted": "#787470",
+        "parfang-border": "#E8E4DF",
+        "parfang-overlay": "rgba(28, 27, 26, 0.55)",
+
+        // Stitch Semantic Mappings
+        "primary": "#75593b",
+        "primary-container": "#B89775",
+        "on-primary-fixed-variant": "#5b4226",
+        "surface-container": "#eeeeed",
+        "on-secondary-fixed": "#1c1b1a",
+        "surface-container-low": "#f3f4f3",
+        "secondary-container": "#e6e2df",
+        "error-container": "#ffdad6",
+        "surface-tint": "#75593b",
+        "error": "#ba1a1a",
+        "tertiary-fixed": "#e8e1dc",
+        "inverse-primary": "#e4c09c",
+        "outline": "#80756b",
+        "on-secondary-container": "#666462",
+        "tertiary-fixed-dim": "#cbc5c1",
+        "on-secondary": "#ffffff",
+        "inverse-surface": "#2f3130",
+        "primary-fixed": "#ffddbb",
+        "secondary": "#605e5c",
+        "on-tertiary-container": "#373431",
+        "surface-dim": "#dadad9",
+        "on-tertiary": "#ffffff",
+        "tertiary-container": "#a19c98",
+        "outline-variant": "#d2c4b8",
+        "on-tertiary-fixed-variant": "#494643",
+        "surface-container-high": "#e8e8e7",
+        "inverse-on-surface": "#f1f1f0",
+        "surface": "#ffffff",
+        "on-error-container": "#93000a",
+        "secondary-fixed": "#e6e2df",
+        "on-error": "#ffffff",
+        "surface-container-highest": "#e2e2e2",
+        "background": "#FBFBFA",
+        "on-primary-container": "#463016",
+        "on-surface": "#1C1B1A",
+        "on-background": "#1C1B1A",
+        "secondary-fixed-dim": "#cac6c4",
+        "surface-variant": "#e2e2e2",
+        "on-surface-variant": "#787470",
+        "on-tertiary-fixed": "#1d1b18",
+        "on-primary": "#ffffff",
+        "surface-bright": "#FBFBFA",
+        "on-primary-fixed": "#2a1702",
+        "on-secondary-fixed-variant": "#484645",
+        "surface-container-lowest": "#ffffff",
+        "tertiary": "#615e5a",
+        "primary-fixed-dim": "#e4c09c"
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      spacing: {
+        "section-gap-mobile": "64px",
+        "gutter": "24px",
+        "container-max": "1280px",
+        "base": "8px",
+        "section-gap-desktop": "120px",
+        "margin-mobile": "20px"
+      },
+      fontFamily: {
+        // Official display definitions
+        "display": ["Philosopher", "EB Garamond", "Georgia", "serif"],
+        "nav": ["\"Josefin Sans\"", "Plus Jakarta Sans", "sans-serif"],
+        "handwrite": ["\"Shadows Into Light\"", "cursive"],
+        "body": ["Poppins", "Inter", "system-ui", "sans-serif"],
+
+        // Stitch specific fonts
+        "body-md": ["Inter", "sans-serif"],
+        "nav-link": ["Plus Jakarta Sans", "sans-serif"],
+        "headline-md": ["EB Garamond", "serif"],
+        "headline-sm": ["EB Garamond", "serif"],
+        "body-lg": ["Inter", "sans-serif"],
+        "label-caps": ["Plus Jakarta Sans", "sans-serif"],
+        "display-lg-mobile": ["EB Garamond", "serif"],
+        "display-lg": ["EB Garamond", "serif"]
+      },
+      animation: {
+        "fade-in": "fadeIn 0.6s ease-out forwards",
+        "slide-up": "slideUp 0.5s ease-out forwards",
+        "slide-left": "slideLeft 0.5s ease-out forwards",
+        "underline-in": "underlineIn 0.3s ease-out forwards",
+      },
+      keyframes: {
+        fadeIn: { from: { opacity: "0" }, to: { opacity: "1" } },
+        slideUp: { from: { opacity: "0", transform: "translateY(24px)" }, to: { opacity: "1", transform: "translateY(0)" } },
+        slideLeft: { from: { opacity: "0", transform: "translateX(-30px)" }, to: { opacity: "1", transform: "translateX(0)" } },
+        underlineIn: { from: { width: "0%" }, to: { width: "100%" } },
+      },
+      letterSpacing: {
+        "nav": "0.15em",
+        "wide-xl": "0.25em",
+      },
+    },
+  },
+  plugins: [],
+}
