@@ -6,6 +6,7 @@ import NotesSection from '@/components/home/NotesSection';
 import WeatherRecommendation from '@/components/home/WeatherRecommendation';
 import FeaturedPerfumes from '@/components/home/FeaturedPerfumes';
 import GuidePreview from '@/components/home/GuidePreview';
+import YouMightLike from '@/components/home/YouMightLike';
 
 export default function HomePage() {
   return (
@@ -15,6 +16,7 @@ export default function HomePage() {
       <OccasionSection />
       <NotesSection />
       <WeatherRecommendation />
+      <YouMightLike />
       <FeaturedPerfumes />
       <GuidePreview />
     </>

@@ -18,6 +18,7 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { session, profile } = useAuthSession();
   const displayName = profile?.display_name || session?.user.displayName || session?.user.email.split('@')[0];
+  const hideGlobalSearch = pathname === '/explore';
 
   // Monitor scroll behavior to trigger compact header
   useEffect(() => {
@@ -124,16 +125,18 @@ export const Navbar = () => {
           
           {/* Search bar (Left aligned when not scrolled, disappears on scroll/moves) */}
           <div className="hidden md:flex items-center w-1/4">
-            <form onSubmit={handleSearchSubmit} className="relative w-full max-w-[240px]">
-              <input
-                type="text"
-                placeholder="Search fragrances..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-parfang-surface border border-parfang-border/80 px-4 py-2 pl-9 rounded-full text-xs font-body text-parfang-text focus:outline-none focus:border-parfang-accent transition-colors"
-              />
-              <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-parfang-muted" />
-            </form>
+            {!hideGlobalSearch && (
+              <form onSubmit={handleSearchSubmit} className="relative w-full max-w-[240px]">
+                <input
+                  type="text"
+                  placeholder="Search fragrances..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-parfang-surface border border-parfang-border/80 px-4 py-2 pl-9 rounded-full text-xs font-body text-parfang-text focus:outline-none focus:border-parfang-accent transition-colors"
+                />
+                <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-parfang-muted" />
+              </form>
+            )}
           </div>
 
           {/* Centered Brand Logo */}
@@ -268,16 +271,18 @@ export const Navbar = () => {
             >
               <div className="max-h-[calc(100vh-5rem)] overflow-y-auto px-margin-mobile py-6">
                 <div className="flex flex-col gap-4">
-                  <form onSubmit={handleSearchSubmit} className="relative w-full mb-2">
-                    <input
-                      type="text"
-                      placeholder="Search fragrances..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-parfang-bg border border-parfang-border px-4 py-3 pl-10 rounded-full text-sm font-body text-parfang-text focus:outline-none"
-                    />
-                    <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-parfang-muted" />
-                  </form>
+                  {!hideGlobalSearch && (
+                    <form onSubmit={handleSearchSubmit} className="relative w-full mb-2">
+                      <input
+                        type="text"
+                        placeholder="Search fragrances..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-parfang-bg border border-parfang-border px-4 py-3 pl-10 rounded-full text-sm font-body text-parfang-text focus:outline-none"
+                      />
+                      <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-parfang-muted" />
+                    </form>
+                  )}
 
                   {navLinks.map((link) => (
                     <Link
