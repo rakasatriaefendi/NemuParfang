@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -83,9 +84,10 @@ export const Navbar = () => {
       {/* 1. Thin Top Bar */}
       <motion.div
         initial={false}
-        animate={isScrolled ? { height: 0, opacity: 0 } : { height: 33, opacity: 1 }}
-        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+        animate={isScrolled ? { height: 0, opacity: 0, y: -6 } : { height: 33, opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="hidden overflow-hidden border-b border-white/5 bg-[#1C1B1A] text-[#FBFBFA] md:block"
+        style={{ willChange: 'height, opacity, transform' }}
       >
         <Container className="flex h-8 items-center justify-between text-[11px] font-nav uppercase tracking-widest">
           <div>Skip the sniff, just click and pick!</div>
@@ -153,8 +155,24 @@ export const Navbar = () => {
             <Link href="/match" className="hidden lg:flex items-center gap-2 bg-parfang-accent text-white px-6 py-2.5 rounded-full font-nav text-xs uppercase tracking-wider hover:bg-parfang-accent-dark transition-all duration-300 shadow-sm active:scale-95">
               <Sparkles className="w-3.5 h-3.5" /> Start AI Quiz
             </Link>
-            <Link aria-label={session ? 'Open profile' : 'Open login'} href={session ? '/profile' : '/login'} className="text-parfang-text p-2 hover:text-parfang-accent transition-colors">
-              <User className="w-5 h-5" />
+            <Link
+              aria-label={session ? 'Open profile' : 'Open login'}
+              href={session ? '/profile' : '/login'}
+              className="text-parfang-text p-1 hover:text-parfang-accent transition-colors"
+            >
+              {session && profile?.avatar_url ? (
+                <span className="relative block h-9 w-9 overflow-hidden rounded-full border border-parfang-border/70 bg-parfang-surface shadow-sm">
+                  <Image
+                    src={profile.avatar_url}
+                    alt={displayName || 'Profile photo'}
+                    fill
+                    className="object-cover"
+                    sizes="36px"
+                  />
+                </span>
+              ) : (
+                <User className="w-5 h-5" />
+              )}
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

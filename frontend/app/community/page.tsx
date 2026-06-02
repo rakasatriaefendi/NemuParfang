@@ -39,16 +39,6 @@ export default function CommunityPage() {
   const [feedError, setFeedError] = useState('');
   const [peopleResults, setPeopleResults] = useState<ProfileRecord[]>([]);
   const [isPeopleLoading, setIsPeopleLoading] = useState(false);
-  const [isSearchCompact, setIsSearchCompact] = useState(false);
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsSearchCompact(window.scrollY > 160);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -110,9 +100,7 @@ export default function CommunityPage() {
       window.clearTimeout(timeout);
     };
   }, [search]);
-
   const displayName = profile?.display_name || session?.user.displayName || session?.user.email;
-  const stickyExpanded = !isSearchCompact || isSearchExpanded;
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -307,39 +295,19 @@ export default function CommunityPage() {
 
       <div className="sticky top-24 z-30 border-b border-parfang-border/60 bg-parfang-bg/95 backdrop-blur-md md:top-28">
         <Container className="py-4">
-          <div className={cn('transition-all duration-300', stickyExpanded ? 'max-w-3xl' : 'max-w-sm')}>
-            <div
-              className={cn(
-                'flex items-center gap-3 rounded-full border border-parfang-border bg-parfang-surface px-4 py-3 shadow-sm transition-all duration-300',
-                stickyExpanded ? 'w-full' : 'w-14 justify-center',
-              )}
-            >
-              <button
-                type="button"
-                onClick={() => setIsSearchExpanded((current) => !current)}
-                className="text-parfang-muted transition hover:text-parfang-accent"
-              >
+          <div className="max-w-3xl">
+            <div className="flex w-full items-center gap-3 rounded-full border border-parfang-border bg-parfang-surface px-4 py-3 shadow-sm">
+              <span className="text-parfang-muted">
                 <Search className="h-4 w-4" />
-              </button>
-              {stickyExpanded && (
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Search posts or public profiles..."
-                  className="w-full bg-transparent text-sm text-parfang-text outline-none"
-                />
-              )}
+              </span>
+              <input
+                type="text"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search posts or public profiles..."
+                className="w-full bg-transparent text-sm text-parfang-text outline-none"
+              />
             </div>
-            {!stickyExpanded && (
-              <button
-                type="button"
-                onClick={() => setIsSearchExpanded(true)}
-                className="mt-2 hidden font-nav text-[10px] uppercase tracking-widest text-parfang-muted transition hover:text-parfang-accent md:inline-flex"
-              >
-                Search community
-              </button>
-            )}
           </div>
         </Container>
       </div>
