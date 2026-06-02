@@ -1,8 +1,24 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { ArrowRight, Shield, Sparkles, Users, Wand2 } from 'lucide-react';
 import { Container } from '@/components/shared/Container';
 import { ImageWithSkeleton } from '@/components/shared/ImageWithSkeleton';
 import { Button } from '@/components/ui/Button';
+
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    'Learn how NemuParfang combines perfume catalog data, personal scent journaling, and layered recommendations to make fragrance discovery calmer and more useful.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About NemuParfang',
+    description:
+      'Learn how NemuParfang combines perfume catalog data, personal scent journaling, and layered recommendations to make fragrance discovery calmer and more useful.',
+    url: '/about',
+  },
+};
 
 const pillars = [
   {

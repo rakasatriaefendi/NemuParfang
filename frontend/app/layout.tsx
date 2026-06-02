@@ -1,12 +1,23 @@
 import './globals.css';
 import React from 'react';
 import { AuthProvider } from '@/components/auth/AuthProvider';
+import { SITE_ORIGIN, SITE_URL } from '@/lib/site';
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: 'NemuParfang - AI Fragrance Discovery',
+  metadataBase: SITE_ORIGIN,
+  title: {
+    default: 'NemuParfang - AI Fragrance Discovery',
+    template: '%s | NemuParfang',
+  },
   description: 'Skip the sniff, just click and pick!  Discover fragrances, notes, and accords with a calmer AI-assisted experience.',
   keywords: 'perfume, fragrance, scent, AI recommendation, fragrance discovery, notes, accords, unisex',
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       { url: '/assets/favicon_io/favicon.ico' },
@@ -21,7 +32,8 @@ export const metadata = {
     title: 'NemuParfang - AI Fragrance Discovery',
     description: 'Skip the sniff, just click and pick!  Discover fragrances, notes, and accords with a calmer AI-assisted experience.',
     type: 'website',
-    url: 'https://nemuparfang.com',
+    url: SITE_URL,
+    siteName: 'NemuParfang',
     images: [
       {
         url: '/assets/og-image.webp',
