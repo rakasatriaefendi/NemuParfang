@@ -2,6 +2,7 @@ import { fetchApi } from './client';
 import { MOCK_PERFUMES } from '../mock-data';
 import { CatalogPerfume, CatalogResponse, Perfume, SupabasePerfumeRow } from '../types';
 import { hasSupabasePublicConfig, supabaseRest } from '../supabase';
+import { ENV } from '../env';
 
 const fallbackImages = [
   '/assets/perfume-placeholder.webp',
@@ -80,17 +81,42 @@ const supabaseSelect =
   'perfume_accords(position,accords(name)),' +
   'perfume_notes(position,note_type,notes(name))';
 
-export async function getPerfumes(filters?: {
+export interface PerfumePageResult {
+  items: Perfume[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+interface PerfumeFilters {
   occasion?: string;
   note?: string;
   gender?: string;
   search?: string;
-}): Promise<Perfume[]> {
+}
+
+const filterByNote = (perfumes: Perfume[], note?: string) => {
+  if (!note || note === 'All') return perfumes;
+  const needle = note.toLowerCase();
+  return perfumes.filter((perfume) =>
+    perfume.accords.some((accord) => accord.name.toLowerCase().includes(needle)) ||
+    perfume.notes.top.concat(perfume.notes.middle, perfume.notes.base).some((perfumeNote) => perfumeNote.toLowerCase().includes(needle))
+  );
+};
+
+export async function getPerfumesPage(
+  filters?: PerfumeFilters & {
+    page?: number;
+    pageSize?: number;
+  }
+): Promise<PerfumePageResult> {
+  const page = Math.max(1, filters?.page || 1);
+  const pageSize = Math.max(1, filters?.pageSize || 24);
+
   if (hasSupabasePublicConfig()) {
     const params = new URLSearchParams({
       select: supabaseSelect,
       order: 'review_count.desc',
-      limit: '72',
     });
     if (filters?.search) {
       params.set('or', `(name.ilike.*${filters.search}*,brand.ilike.*${filters.search}*)`);
@@ -100,22 +126,42 @@ export async function getPerfumes(filters?: {
       params.set('gender', `eq.${gender}`);
     }
     try {
-      const rows = await supabaseRest<SupabasePerfumeRow[]>(`perfumes?${params.toString()}`);
-      const perfumes = rows.map(mapSupabasePerfume);
-      if (filters?.note && filters.note !== 'All') {
-        const needle = filters.note.toLowerCase();
-        return perfumes.filter((perfume) =>
-          perfume.accords.some((accord) => accord.name.toLowerCase().includes(needle)) ||
-          perfume.notes.top.concat(perfume.notes.middle, perfume.notes.base).some((note) => note.toLowerCase().includes(needle))
-        );
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+      const response = await fetch(`${ENV.SUPABASE_URL}/rest/v1/perfumes?${params.toString()}`, {
+        headers: {
+          apikey: ENV.SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${ENV.SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'count=exact',
+          Range: `${from}-${to}`,
+          'Range-Unit': 'items',
+        },
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Supabase REST error ${response.status}: ${response.statusText}`);
       }
-      return perfumes;
+
+      const rows = (await response.json()) as SupabasePerfumeRow[];
+      const perfumes = filterByNote(rows.map(mapSupabasePerfume), filters?.note);
+      const contentRange = response.headers.get('content-range') || '';
+      const totalToken = contentRange.split('/')[1];
+      const total = totalToken && totalToken !== '*' ? Number(totalToken) : perfumes.length;
+
+      return {
+        items: perfumes,
+        total,
+        page,
+        pageSize,
+      };
     } catch {
       // Fall through to existing API / mock fallback below.
     }
   }
 
-  const params = new URLSearchParams({ page_size: '24' });
+  const params = new URLSearchParams({ page_size: String(pageSize), page: String(page) });
   if (filters?.search) params.set('search', filters.search);
   if (filters?.note && filters.note !== 'All') params.set('accord', filters.note);
   if (filters?.gender && filters.gender !== 'All') {
@@ -123,10 +169,28 @@ export async function getPerfumes(filters?: {
   }
   try {
     const response = await fetchApi<CatalogResponse>(`/perfumes?${params}`);
-    return response.items.map(mapCatalogPerfume);
+    return {
+      items: response.items.map(mapCatalogPerfume),
+      total: response.total,
+      page: response.page,
+      pageSize: response.page_size,
+    };
   } catch {
-    return MOCK_PERFUMES;
+    const filtered = filterByNote(MOCK_PERFUMES, filters?.note);
+    const from = (page - 1) * pageSize;
+    const items = filtered.slice(from, from + pageSize);
+    return {
+      items,
+      total: filtered.length,
+      page,
+      pageSize,
+    };
   }
+}
+
+export async function getPerfumes(filters?: PerfumeFilters): Promise<Perfume[]> {
+  const result = await getPerfumesPage(filters);
+  return result.items;
 }
 
 export async function getPerfumeById(id: string): Promise<Perfume | null> {

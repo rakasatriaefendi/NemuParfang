@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Container } from '@/components/shared/Container';
 import { PerfumeCard } from '@/components/perfume/PerfumeCard';
-import { getPerfumes } from '@/lib/api/perfumes';
+import { getPerfumesPage } from '@/lib/api/perfumes';
 import { Perfume } from '@/lib/types';
 import { ALL_NOTES } from '@/lib/constants';
 import { Check, ChevronDown, Search, SlidersHorizontal, RefreshCw } from 'lucide-react';
@@ -19,14 +19,18 @@ const ExplorePageContent = () => {
   const paramSearch = searchParams.get('search') || '';
   const paramNote = searchParams.get('note') || 'All';
   const paramGender = searchParams.get('gender') || 'All';
+  const paramPage = Math.max(1, Number(searchParams.get('page') || '1') || 1);
+  const PAGE_SIZE = 24;
 
   const [search, setSearch] = useState(paramSearch);
   const [note, setNote] = useState(paramNote);
   const [gender, setGender] = useState(paramGender);
+  const [page, setPage] = useState(paramPage);
   const [sortBy, setSortBy] = useState('rating'); // 'rating' | 'reviews'
   const [showNotePicker, setShowNotePicker] = useState(false);
 
   const [perfumes, setPerfumes] = useState<Perfume[]>([]);
+  const [totalPerfumes, setTotalPerfumes] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -35,7 +39,8 @@ const ExplorePageContent = () => {
     setSearch(paramSearch);
     setNote(paramNote);
     setGender(paramGender);
-  }, [paramSearch, paramNote, paramGender]);
+    setPage(paramPage);
+  }, [paramSearch, paramNote, paramGender, paramPage]);
 
   // Fetch perfumes when filters change
   useEffect(() => {
@@ -44,19 +49,22 @@ const ExplorePageContent = () => {
       setIsLoading(true);
       setIsError(false);
       try {
-        const data = await getPerfumes({
-          search,
-          note,
-          gender
-        });
+          const data = await getPerfumesPage({
+            search,
+            note,
+            gender,
+            page,
+            pageSize: PAGE_SIZE,
+          });
         if (active) {
           // Client-side sorting
-          const sorted = [...data].sort((a, b) => {
+          const sorted = [...data.items].sort((a, b) => {
             if (sortBy === 'rating') return b.rating - a.rating;
             if (sortBy === 'reviews') return b.reviewCount - a.reviewCount;
             return 0;
           });
           setPerfumes(sorted);
+          setTotalPerfumes(data.total);
           setIsLoading(false);
         }
       } catch (err) {
@@ -71,23 +79,26 @@ const ExplorePageContent = () => {
     return () => {
       active = false;
     };
-  }, [search, note, gender, sortBy]);
+  }, [search, note, gender, sortBy, page]);
 
   // Update query params in URL
   const updateUrlParams = (newFilters: {
     search?: string;
     note?: string;
     gender?: string;
+    page?: number;
   }) => {
     const params = new URLSearchParams();
     
     const searchVal = newFilters.search !== undefined ? newFilters.search : search;
     const noteVal = newFilters.note !== undefined ? newFilters.note : note;
     const genderVal = newFilters.gender !== undefined ? newFilters.gender : gender;
+    const pageVal = newFilters.page !== undefined ? newFilters.page : page;
 
     if (searchVal) params.set('search', searchVal);
     if (noteVal && noteVal !== 'All') params.set('note', noteVal);
     if (genderVal && genderVal !== 'All') params.set('gender', genderVal);
+    if (pageVal > 1) params.set('page', String(pageVal));
 
     router.push(`/explore?${params.toString()}`);
   };
@@ -96,9 +107,14 @@ const ExplorePageContent = () => {
     setSearch('');
     setNote('All');
     setGender('All');
+    setPage(1);
     setShowNotePicker(false);
     router.push('/explore');
   };
+
+  const totalPages = Math.max(1, Math.ceil(totalPerfumes / PAGE_SIZE));
+  const rangeStart = totalPerfumes === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = totalPerfumes === 0 ? 0 : Math.min(page * PAGE_SIZE, totalPerfumes);
 
   return (
     <div className="min-h-screen bg-parfang-bg pb-24">
@@ -152,7 +168,7 @@ const ExplorePageContent = () => {
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
-                    updateUrlParams({ search: e.target.value });
+                    updateUrlParams({ search: e.target.value, page: 1 });
                   }}
                   className="w-full bg-parfang-bg border border-parfang-border/80 px-4 py-2 pl-9 rounded-lg text-xs font-body text-parfang-text focus:outline-none focus:border-parfang-accent"
                 />
@@ -174,7 +190,7 @@ const ExplorePageContent = () => {
                       checked={gender === gen}
                       onChange={() => {
                         setGender(gen);
-                        updateUrlParams({ gender: gen });
+                        updateUrlParams({ gender: gen, page: 1 });
                       }}
                       className="accent-parfang-accent w-3.5 h-3.5"
                     />
@@ -207,7 +223,7 @@ const ExplorePageContent = () => {
                       onClick={() => {
                         setNote('All');
                         setShowNotePicker(false);
-                        updateUrlParams({ note: 'All' });
+                        updateUrlParams({ note: 'All', page: 1 });
                       }}
                       className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-body text-parfang-text hover:bg-parfang-bg"
                     >
@@ -221,7 +237,7 @@ const ExplorePageContent = () => {
                         onClick={() => {
                           setNote(n);
                           setShowNotePicker(false);
-                          updateUrlParams({ note: n });
+                          updateUrlParams({ note: n, page: 1 });
                         }}
                         className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-body text-parfang-text hover:bg-parfang-bg"
                       >
@@ -240,7 +256,7 @@ const ExplorePageContent = () => {
             {/* Catalog Controller (Sorting & Counter) */}
             <div className="flex justify-between items-center pb-3 border-b border-parfang-border/50 text-xs">
               <span className="font-body text-parfang-muted">
-                Showing {perfumes.length} Fragrances
+                Showing {rangeStart}-{rangeEnd} of {totalPerfumes.toLocaleString()} Fragrances
               </span>
               <div className="flex items-center gap-2">
                 <span className="font-body text-parfang-muted">Sort By:</span>
@@ -308,6 +324,30 @@ const ExplorePageContent = () => {
                     <PerfumeCard perfume={perfume} showMatchScore={false} />
                   </div>
                 ))}
+              </div>
+            )}
+
+            {!isLoading && !isError && totalPerfumes > 0 && (
+              <div className="flex items-center justify-between border-t border-parfang-border/50 pt-6">
+                <button
+                  type="button"
+                  onClick={() => updateUrlParams({ page: Math.max(1, page - 1) })}
+                  disabled={page <= 1}
+                  className="rounded-full border border-parfang-border px-5 py-2 text-xs font-nav uppercase tracking-wider text-parfang-text transition disabled:cursor-not-allowed disabled:opacity-40 hover:border-parfang-accent hover:text-parfang-accent"
+                >
+                  Previous
+                </button>
+                <span className="font-body text-xs text-parfang-muted">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => updateUrlParams({ page: Math.min(totalPages, page + 1) })}
+                  disabled={page >= totalPages}
+                  className="rounded-full border border-parfang-border px-5 py-2 text-xs font-nav uppercase tracking-wider text-parfang-text transition disabled:cursor-not-allowed disabled:opacity-40 hover:border-parfang-accent hover:text-parfang-accent"
+                >
+                  Next
+                </button>
               </div>
             )}
           </div>
