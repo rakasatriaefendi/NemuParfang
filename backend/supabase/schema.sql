@@ -87,6 +87,9 @@ create table if not exists public.profiles (
   display_name text,
   avatar_url text,
   bio text,
+  is_public boolean not null default false,
+  show_favorites boolean not null default true,
+  show_reviews boolean not null default true,
   fragrance_dna jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -211,6 +214,11 @@ create policy "Users can read their own profile"
 on public.profiles for select
 using (auth.uid() = id);
 
+drop policy if exists "Public can read opted-in profiles" on public.profiles;
+create policy "Public can read opted-in profiles"
+on public.profiles for select
+using (is_public = true);
+
 drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile"
 on public.profiles for update
@@ -221,6 +229,20 @@ drop policy if exists "Users can read their own perfume collections" on public.u
 create policy "Users can read their own perfume collections"
 on public.user_perfumes for select
 using (auth.uid() = user_id);
+
+drop policy if exists "Public can read opted-in favorite collections" on public.user_perfumes;
+create policy "Public can read opted-in favorite collections"
+on public.user_perfumes for select
+using (
+  collection_type = 'favorite'
+  and exists (
+    select 1
+    from public.profiles
+    where profiles.id = user_perfumes.user_id
+      and profiles.is_public = true
+      and profiles.show_favorites = true
+  )
+);
 
 drop policy if exists "Users can add their own perfume collections" on public.user_perfumes;
 create policy "Users can add their own perfume collections"
@@ -260,7 +282,9 @@ using (auth.uid() = user_id);
 
 grant usage on schema public to anon, authenticated;
 grant select on public.perfumes, public.notes, public.perfume_notes, public.accords, public.perfume_accords, public.reviews to anon, authenticated;
+grant select on public.profiles to anon;
 grant select, update on public.profiles to authenticated;
+grant select on public.user_perfumes to anon;
 grant select, insert, delete on public.user_perfumes to authenticated;
 grant insert, update, delete on public.reviews to authenticated;
 grant usage, select on all sequences in schema public to authenticated;

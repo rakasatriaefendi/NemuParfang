@@ -124,3 +124,22 @@ export const removeReview = async (session: AuthSession, reviewId: string): Prom
     throw new Error('Failed to delete review.');
   }
 };
+
+export const loadUserReviews = async (userId: string): Promise<Review[]> => {
+  if (!ENV.HAS_SUPABASE) return [];
+
+  const response = await fetch(
+    `${ENV.SUPABASE_URL}/rest/v1/reviews?select=id,user_id,perfume_id,rating,content,sentiment,created_at,updated_at&user_id=eq.${userId}&order=created_at.desc&limit=8`,
+    {
+      headers: reviewHeaders(),
+      cache: 'no-store',
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to load user reviews: ${response.status} ${response.statusText}`);
+  }
+
+  const rows = (await response.json()) as ReviewRow[];
+  return rows.map((row) => mapReview(row));
+};

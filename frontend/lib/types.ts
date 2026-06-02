@@ -65,6 +65,9 @@ export interface ProfileRecord {
   display_name: string | null;
   avatar_url: string | null;
   bio: string | null;
+  is_public?: boolean;
+  show_favorites?: boolean;
+  show_reviews?: boolean;
   fragrance_dna?: Record<string, unknown>;
 }
 
