@@ -74,8 +74,8 @@ Ini berarti schema, relasi many-to-many, image URL parfum, dan proses seed katal
 > Tujuan: Pengguna punya pengalaman personal
 
 **Fitur**
-- [ ] Tambah parfum ke Favorites / Wishlist
-- [ ] "Perfume Wardrobe" — koleksi parfum yang dimiliki user
+- [x] Tambah parfum ke Favorites / Wishlist
+- [x] "Perfume Wardrobe" — koleksi parfum yang dimiliki user
 - [ ] Review & rating sistem
 - [ ] Profil publik user (opsional)
 
@@ -84,6 +84,15 @@ Ini berarti schema, relasi many-to-many, image URL parfum, dan proses seed katal
 - [ ] Rekomendasi "You Might Like" di homepage berdasarkan favorites user
 
 **Deliverable Phase 2:** Platform terasa personal dan sosial. User punya koleksi, bisa review, dapat rekomendasi sederhana.
+
+### Status Update Phase 2
+
+- `Done`
+  Favorites dan wardrobe sudah usable, termasuk halaman koleksi, preview di profile, dan proteksi auth dasar.
+- `Priority Now`
+  Review & rating system adalah pekerjaan paling penting berikutnya karena benar-benar user-facing, menambah engagement, dan tidak bergantung pada machine learning.
+- `After That`
+  Rapikan UX profile/favorites/wardrobe, perkuat search/filter catalog, lalu tambahkan recommendation sederhana berbasis shared notes/accords tanpa ML sebagai penutup Phase 2.
 
 ---
 

@@ -10,14 +10,14 @@ import { AccordBar } from '@/components/perfume/AccordBar';
 import { PerfumeCard } from '@/components/perfume/PerfumeCard';
 import { getPerfumeById } from '@/lib/api/perfumes';
 import { getSimilarPerfumes } from '@/lib/api/recommendations';
-import { MOCK_REVIEWS } from '@/lib/mock-data';
+import { loadReviews, persistReview, removeReview } from '@/lib/api/reviews';
 import { Perfume, Review } from '@/lib/types';
-import { SILLAGE_LABELS } from '@/lib/constants';
-import { Star, Clock, Sparkles, Smile, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Clock, Sparkles, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthSession, useCollections } from '@/components/auth/AuthProvider';
 import { FavoriteButton } from '@/components/shared/FavoriteButton';
 import { Button } from '@/components/ui/Button';
+import { ReviewStars } from '@/components/review/ReviewStars';
 
 export default function PerfumeDetailPage() {
   const params = useParams();
@@ -28,6 +28,9 @@ export default function PerfumeDetailPage() {
   const [similar, setSimilar] = useState<Perfume[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
+  const [reviewDraft, setReviewDraft] = useState({ rating: 0, content: '' });
+  const [reviewError, setReviewError] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -44,7 +47,6 @@ export default function PerfumeDetailPage() {
           setPerfume(p);
           const sim = await getSimilarPerfumes(id);
           setSimilar(sim);
-          setReviews(MOCK_REVIEWS[id] || []);
         } else {
           setPerfume(null);
         }
@@ -57,6 +59,103 @@ export default function PerfumeDetailPage() {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    let active = true;
+
+    const fetchReviews = async () => {
+      try {
+        const nextReviews = await loadReviews(id, session?.user.id);
+        if (active) {
+          setReviews(nextReviews);
+        }
+      } catch {
+        if (active) {
+          setReviews([]);
+        }
+      }
+    };
+
+    fetchReviews();
+    return () => {
+      active = false;
+    };
+  }, [id, session?.user.id]);
+
+  const currentUserReview = session ? reviews.find((review) => review.userId === session.user.id) || null : null;
+  const internalAverageRating = reviews.length
+    ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1))
+    : null;
+
+  useEffect(() => {
+    if (!session) {
+      setReviewDraft({ rating: 0, content: '' });
+      return;
+    }
+
+    if (currentUserReview) {
+      setReviewDraft({
+        rating: currentUserReview.rating,
+        content: currentUserReview.content,
+      });
+      return;
+    }
+
+    setReviewDraft({ rating: 0, content: '' });
+  }, [currentUserReview?.id, session]);
+
+  const refreshReviews = async () => {
+    const nextReviews = await loadReviews(id, session?.user.id);
+    setReviews(nextReviews);
+  };
+
+  const handleSubmitReview = async () => {
+    if (!session) {
+      router.push(`/login?redirect=/perfume/${id}`);
+      return;
+    }
+
+    if (reviewDraft.rating < 1 || reviewDraft.rating > 5) {
+      setReviewError('Choose a rating from 1 to 5 stars.');
+      return;
+    }
+
+    if (reviewDraft.content.trim().length < 3) {
+      setReviewError('Write at least a short impression before submitting.');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    setReviewError('');
+    try {
+      await persistReview(session, id, {
+        reviewId: currentUserReview?.id,
+        rating: reviewDraft.rating,
+        content: reviewDraft.content,
+      });
+      await refreshReviews();
+    } catch (error) {
+      setReviewError(error instanceof Error ? error.message : 'Failed to save your review.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!session || !currentUserReview) return;
+
+    setIsSubmittingReview(true);
+    setReviewError('');
+    try {
+      await removeReview(session, currentUserReview.id);
+      await refreshReviews();
+      setReviewDraft({ rating: 0, content: '' });
+    } catch (error) {
+      setReviewError(error instanceof Error ? error.message : 'Failed to delete your review.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -84,6 +183,8 @@ export default function PerfumeDetailPage() {
   }
 
   const wardrobeActive = wardrobe.includes(perfume.id);
+  const displayRating = internalAverageRating ?? perfume.rating;
+  const displayReviewCount = reviews.length || perfume.reviewCount;
 
   return (
     <div className="min-h-screen bg-parfang-bg pb-24">
@@ -102,18 +203,18 @@ export default function PerfumeDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-16">
           
           {/* Left Column: Image Area */}
-          <div className="lg:col-span-6 relative aspect-square rounded-2xl overflow-hidden shadow-sm bg-parfang-surface border border-parfang-border">
+          <div className="lg:col-span-5 relative h-[340px] sm:h-[420px] lg:h-[500px] xl:h-[520px] rounded-2xl overflow-hidden shadow-sm bg-parfang-surface border border-parfang-border">
             <Image
               src={perfume.imageUrl}
               alt={perfume.name}
               fill
               priority
-              className="object-cover object-center"
+              className="object-contain object-center p-4 sm:p-6"
             />
           </div>
 
           {/* Right Column: Spec Sheet */}
-          <div className="lg:col-span-6 flex flex-col items-start text-left">
+          <div className="lg:col-span-7 flex flex-col items-start text-left">
             <span className="font-nav text-xs uppercase tracking-widest text-parfang-muted mb-2 font-medium">
               {perfume.brand}
             </span>
@@ -126,22 +227,12 @@ export default function PerfumeDetailPage() {
 
             {/* Star Rating details */}
             <div className="flex items-center gap-2 mb-6 pb-6 border-b border-parfang-border w-full">
-              <div className="flex text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={cn(
-                      'w-4 h-4 fill-current',
-                      i < Math.floor(perfume.rating) ? 'text-amber-500' : 'text-parfang-border'
-                    )}
-                  />
-                ))}
-              </div>
+              <ReviewStars value={Math.round(displayRating)} />
               <span className="font-body text-sm font-bold text-parfang-text ml-1">
-                {perfume.rating}
+                {displayRating.toFixed(1)}
               </span>
               <span className="font-body text-xs text-parfang-muted">
-                ({perfume.reviewCount} discovery reviews)
+                ({displayReviewCount} {reviews.length ? 'community reviews' : 'discovery reviews'})
               </span>
             </div>
 
@@ -249,9 +340,95 @@ export default function PerfumeDetailPage() {
           <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 text-left">
             {/* Reviews Column */}
             <div className="lg:col-span-8 flex flex-col gap-6">
+              <div className="rounded-2xl border border-parfang-border bg-parfang-surface p-6">
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <span className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent font-semibold">
+                      Community Review
+                    </span>
+                    <h3 className="mt-2 font-display text-2xl text-parfang-text font-bold">
+                      {currentUserReview ? 'Edit your impression' : 'Share your impression'}
+                    </h3>
+                    <p className="mt-2 max-w-2xl font-body text-sm leading-relaxed text-parfang-muted">
+                      Use a familiar 1 to 5 star rating, then add a short comment about wear, notes, or how the fragrance felt on skin.
+                    </p>
+                  </div>
+
+                  {session ? (
+                    <>
+                      <div className="flex flex-col gap-2">
+                        <span className="font-nav text-[10px] uppercase tracking-widest text-parfang-text font-bold">
+                          Your rating
+                        </span>
+                        <ReviewStars
+                          value={reviewDraft.rating}
+                          onChange={(value) => setReviewDraft((current) => ({ ...current, rating: value }))}
+                          interactive
+                          size={24}
+                        />
+                        <span className="font-body text-xs text-parfang-muted">
+                          {reviewDraft.rating > 0 ? `${reviewDraft.rating} of 5 stars` : 'Tap a star to rate'}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <label className="font-nav text-[10px] uppercase tracking-widest text-parfang-text font-bold">
+                          Your comment
+                        </label>
+                        <textarea
+                          value={reviewDraft.content}
+                          onChange={(event) => setReviewDraft((current) => ({ ...current, content: event.target.value }))}
+                          rows={5}
+                          maxLength={2000}
+                          placeholder="How does it wear, what stands out, and when would you reach for it?"
+                          className="min-h-[144px] rounded-xl border border-parfang-border bg-parfang-bg px-4 py-3 text-sm text-parfang-text outline-none transition focus:border-parfang-accent"
+                        />
+                        <div className="flex items-center justify-between text-xs text-parfang-muted">
+                          <span>{currentUserReview ? 'Update your existing review anytime.' : 'One review per fragrance per account.'}</span>
+                          <span>{reviewDraft.content.length}/2000</span>
+                        </div>
+                      </div>
+
+                      {reviewError && (
+                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                          {reviewError}
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Button onClick={handleSubmitReview} disabled={isSubmittingReview}>
+                          {isSubmittingReview ? 'Saving…' : currentUserReview ? 'Update Review' : 'Submit Review'}
+                        </Button>
+                        {currentUserReview && (
+                          <Button
+                            variant="secondary"
+                            onClick={handleDeleteReview}
+                            disabled={isSubmittingReview}
+                            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                          >
+                            Delete Review
+                          </Button>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="rounded-xl border border-parfang-border bg-parfang-bg px-4 py-4">
+                      <p className="font-body text-sm leading-relaxed text-parfang-muted">
+                        Sign in to leave a rating and comment for this fragrance.
+                      </p>
+                      <div className="mt-4">
+                        <Link href={`/login?redirect=/perfume/${id}`}>
+                          <Button>Login to Review</Button>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {reviews.length === 0 ? (
                 <div className="p-8 border border-parfang-border rounded-xl bg-parfang-surface text-center text-parfang-muted">
-                  No reviews submitted yet for this fragrance.
+                  No community reviews submitted yet for this fragrance.
                 </div>
               ) : (
                 reviews.map((rev) => (
@@ -270,11 +447,7 @@ export default function PerfumeDetailPage() {
                           <span className="font-body text-[10px] text-parfang-muted block">{rev.date}</span>
                         </div>
                       </div>
-                      <div className="flex text-amber-500">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={cn('w-3 h-3 fill-current', i < rev.rating ? 'text-amber-500' : 'text-parfang-border')} />
-                        ))}
-                      </div>
+                      <ReviewStars value={rev.rating} size={14} />
                     </div>
                     <p className="font-body text-xs text-parfang-muted leading-relaxed">
                       {rev.content}
@@ -284,32 +457,34 @@ export default function PerfumeDetailPage() {
               )}
             </div>
 
-            {/* AI Sentiment Analysis Block (Prepared) */}
-            <div className="lg:col-span-4 bg-surface-container-low p-6 rounded-xl border border-outline-variant/20 flex flex-col items-start h-fit">
+            {/* Review Summary Block */}
+            <div className="lg:col-span-4 rounded-2xl border border-parfang-border bg-parfang-surface p-6 flex flex-col items-start h-fit">
               <span className="font-label-caps text-[9px] uppercase tracking-wider text-parfang-accent mb-2 block font-semibold">
-                AI Pipeline Integration
+                Review Summary
               </span>
-              <h4 className="font-headline-sm text-base text-parfang-text font-bold mb-3 flex items-center gap-1.5">
-                <Smile className="w-5 h-5 text-parfang-accent" /> Sentiment Analyzer
+              <h4 className="font-headline-sm text-base text-parfang-text font-bold mb-4">
+                Community pulse
               </h4>
-              <p className="font-body text-[11px] text-parfang-muted leading-relaxed mb-6">
-                Connected to NLP sentiment analyzer pipeline contract `/api/reviews/sentiment`. Reviews are automatically classified based on feedback language.
-              </p>
-              
-              <div className="w-full flex flex-col gap-3 text-xs font-body text-parfang-text">
-                <div className="flex justify-between items-center pb-2 border-b border-parfang-border/50">
-                  <span>Sentiment Score</span>
-                  <span className="font-semibold text-emerald-600">92% Positive</span>
+
+              <div className="w-full space-y-4 text-sm">
+                <div className="rounded-xl border border-parfang-border/60 bg-parfang-bg px-4 py-4">
+                  <span className="font-nav text-[10px] uppercase tracking-widest text-parfang-muted">Average rating</span>
+                  <div className="mt-2 flex items-center gap-3">
+                    <ReviewStars value={Math.round(displayRating)} size={18} />
+                    <span className="font-display text-2xl text-parfang-text font-bold">{displayRating.toFixed(1)}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-parfang-border/50">
-                  <span>General Consensus</span>
-                  <span className="text-parfang-muted">Elegant, Long-lasting</span>
+
+                <div className="rounded-xl border border-parfang-border/60 bg-parfang-bg px-4 py-4">
+                  <span className="font-nav text-[10px] uppercase tracking-widest text-parfang-muted">Community reviews</span>
+                  <p className="mt-2 font-display text-2xl text-parfang-text font-bold">{reviews.length}</p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span>NLP Parser State</span>
-                  <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-semibold font-nav uppercase">
-                    Ready
-                  </span>
+
+                <div className="rounded-xl border border-parfang-border/60 bg-parfang-bg px-4 py-4">
+                  <span className="font-nav text-[10px] uppercase tracking-widest text-parfang-muted">Review style</span>
+                  <p className="mt-2 font-body text-sm leading-relaxed text-parfang-muted">
+                    Ratings use simple 1 to 5 stars. The average may show a decimal because it is calculated from the community total.
+                  </p>
                 </div>
               </div>
             </div>
