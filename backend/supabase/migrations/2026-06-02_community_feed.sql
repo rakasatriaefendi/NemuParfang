@@ -1,5 +1,5 @@
 -- Community feed MVP: posts, likes, reposts, comments, and storage bucket.
--- Run this once in the Supabase SQL Editor.
+-- Run this once in the Supabase SQL Editor Test.
 
 begin;
 
