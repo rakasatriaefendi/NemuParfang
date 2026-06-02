@@ -100,6 +100,85 @@ type NamedRow = {
   name: string;
 };
 
+const quizNoteBlacklist = new Set([
+  'alcohol',
+  'vodka',
+  'wine',
+  'whiskey',
+  'whisky',
+  'gin',
+  'rum',
+  'beer',
+  'latex',
+  'vinyl',
+  'wet plaster',
+  'tennis ball',
+  'lava',
+]);
+
+const canonicalQuizNoteLabel = (value: string) => {
+  const normalized = value.trim().toLowerCase();
+
+  const aliasMap: Record<string, string> = {
+    'juniper berries': 'juniper berry',
+    'juniper berry': 'juniper berry',
+    juniper: 'juniper berry',
+    'rose petals': 'rose',
+    'red rose': 'rose',
+    'white rose': 'rose',
+    'bulgarian rose': 'rose',
+    'turkish rose': 'rose',
+    'damask rose': 'rose',
+    'rose otto': 'rose',
+    'rose absolute': 'rose',
+    'lemon zest': 'lemon',
+    'lemon peel': 'lemon',
+    'lime zest': 'lime',
+    'orange blossom': 'orange blossom',
+    'orange flower': 'orange blossom',
+    'sea notes': 'marine',
+    aquatic: 'marine',
+    'water notes': 'marine',
+    musk: 'musky',
+    'white musk': 'musky',
+    'black musk': 'musky',
+    'pink pepper': 'pepper',
+    'black pepper': 'pepper',
+    'sichuan pepper': 'pepper',
+    'green mandarin': 'mandarin',
+    'blood orange': 'orange',
+    'grapefruit peel': 'grapefruit',
+    'cedar needles': 'cedar',
+    cedarwood: 'cedar',
+    sandalwood: 'sandalwood',
+    vetiver: 'vetiver',
+    patchouli: 'patchouli',
+    'vanilla orchid': 'vanilla',
+    'vanilla absolute': 'vanilla',
+    'coffee beans': 'coffee',
+    'cacao pod': 'cocoa',
+    'dark chocolate': 'chocolate',
+    'milk chocolate': 'chocolate',
+    'irish whiskey': 'whiskey',
+  };
+
+  return aliasMap[normalized] || normalized;
+};
+
+const isQuizFriendlyNote = (value: string) => {
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return false;
+  if (quizNoteBlacklist.has(normalized)) return false;
+  if (normalized.length < 3) return false;
+  if (/\d/.test(normalized)) return false;
+  if (/[®™©]/.test(value)) return false;
+  if (normalized.includes(' accord')) return false;
+  if (normalized.includes(' molecule')) return false;
+  if (normalized.includes(' aldehyde')) return false;
+  if (normalized.includes(' ozonic note')) return false;
+  return true;
+};
+
 const filterByNote = (perfumes: Perfume[], note?: string) => {
   if (!note || note === 'All') return perfumes;
   const needle = note.toLowerCase();
@@ -289,6 +368,9 @@ export async function getQuizNoteOptions(): Promise<string[]> {
           .concat(accordRows)
           .map((row) => row.name?.trim())
           .filter((value): value is string => Boolean(value))
+          .filter(isQuizFriendlyNote)
+          .map((name) => canonicalQuizNoteLabel(name))
+          .filter(isQuizFriendlyNote)
           .map((name) => [name.toLowerCase(), name]),
       ).values(),
     );

@@ -181,11 +181,13 @@ const accordInsights: Record<string, Insight> = {
 };
 
 export default function MatchPage() {
+  const notesPerPage = 24;
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<MlMatchRequest>({ age_group: 'young_adult', activity: 'casual', weather: 'warm', style: 'elegant', preferred_accords: [], gender: 'unisex', top_k: 5 });
   const [noteOptions, setNoteOptions] = useState<string[]>(fallbackNoteOptions);
   const [noteQuery, setNoteQuery] = useState('');
+  const [notePage, setNotePage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const isAccords = step === steps.length;
@@ -210,6 +212,16 @@ export default function MatchPage() {
     if (!needle) return noteOptions;
     return noteOptions.filter((option) => option.toLowerCase().includes(needle));
   }, [noteOptions, noteQuery]);
+
+  useEffect(() => {
+    setNotePage(1);
+  }, [noteQuery]);
+
+  const totalNotePages = Math.max(1, Math.ceil(filteredNoteOptions.length / notesPerPage));
+  const visibleNoteOptions = useMemo(() => {
+    const start = (notePage - 1) * notesPerPage;
+    return filteredNoteOptions.slice(start, start + notesPerPage);
+  }, [filteredNoteOptions, notePage]);
 
   const activeInsight = (() => {
     if (isAccords) {
@@ -268,25 +280,68 @@ export default function MatchPage() {
           <h1 className="mt-3 font-display text-4xl md:text-5xl">{isAccords ? 'Which notes pull you closer?' : steps[step].title}</h1>
           <p className="mx-auto mt-3 max-w-xl font-body text-sm text-parfang-muted md:text-base">{isAccords ? 'Select up to five notes or accords. Search helps when you already know a note you love.' : steps[step].subtitle}</p>
           {isAccords && (
-            <div className="mx-auto mt-8 max-w-md">
-              <label className="block text-left font-nav text-[10px] uppercase tracking-[0.16em] text-parfang-muted" htmlFor="match-note-search">
-                Search notes
-              </label>
-              <div className="mt-2 flex items-center gap-3 rounded-full border border-parfang-border bg-parfang-surface px-4 py-3 shadow-sm">
-                <Search className="h-4 w-4 text-parfang-muted" />
-                <input
-                  id="match-note-search"
-                  type="search"
-                  value={noteQuery}
-                  onChange={(event) => setNoteQuery(event.target.value)}
-                  placeholder="Try lavender, bergamot, iris..."
-                  className="w-full bg-transparent font-body text-sm text-parfang-text outline-none placeholder:text-parfang-muted"
-                />
+            <div className="mx-auto mt-8 max-w-4xl rounded-3xl border border-parfang-border bg-parfang-surface/90 p-5 shadow-sm">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="min-w-0 flex-1">
+                  <label className="block text-left font-nav text-[10px] uppercase tracking-[0.16em] text-parfang-muted" htmlFor="match-note-search">
+                    Search notes
+                  </label>
+                  <div className="mt-2 flex items-center gap-3 rounded-full border border-parfang-border bg-parfang-bg px-4 py-3">
+                    <Search className="h-4 w-4 text-parfang-muted" />
+                    <input
+                      id="match-note-search"
+                      type="search"
+                      value={noteQuery}
+                      onChange={(event) => setNoteQuery(event.target.value)}
+                      placeholder="Try lavender, bergamot, iris..."
+                      className="w-full bg-transparent font-body text-sm text-parfang-text outline-none placeholder:text-parfang-muted"
+                    />
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-parfang-border bg-parfang-bg px-4 py-3 text-left md:min-w-[210px]">
+                  <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-parfang-muted">Selection status</p>
+                  <p className="mt-2 font-body text-sm text-parfang-text">{answers.preferred_accords.length} of 5 selected</p>
+                  <p className="mt-1 font-body text-xs text-parfang-muted">Search first, then choose only the notes you really love.</p>
+                </div>
+              </div>
+            </div>
+          )}
+          {isAccords && activeInsight && (
+            <div className="mx-auto mt-6 max-w-4xl rounded-3xl border border-parfang-border bg-parfang-surface/90 p-6 text-left shadow-sm">
+              <div className="grid gap-5 md:grid-cols-[1.15fr_0.85fr]">
+                <div>
+                  <p className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent">
+                    {activeInsight.label}
+                  </p>
+                  <p className="mt-3 font-body text-sm leading-relaxed text-parfang-text md:text-[15px]">
+                    {activeInsight.summary}
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {activeInsight.notes && (
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-emerald-600" />
+                        <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-emerald-700">Usually fits</p>
+                      </div>
+                      <p className="mt-2 font-body text-sm leading-relaxed text-parfang-text">{activeInsight.notes}</p>
+                    </div>
+                  )}
+                  {activeInsight.caution && (
+                    <div className="rounded-2xl border border-rose-200 bg-rose-50/80 px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-rose-600" />
+                        <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-rose-700">Watch out</p>
+                      </div>
+                      <p className="mt-2 font-body text-sm leading-relaxed text-parfang-text">{activeInsight.caution}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
           <div className={cn('mx-auto mt-10 grid gap-4 text-left', isAccords ? 'grid-cols-2 md:grid-cols-4' : 'max-w-4xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3')}>
-            {(isAccords ? filteredNoteOptions : [...steps[step].options]).map((option) => {
+            {(isAccords ? visibleNoteOptions : [...steps[step].options]).map((option) => {
               const selected = isAccords ? answers.preferred_accords.includes(option) : answers[steps[step].key] === option;
               return (
                 <button key={option} type="button" aria-pressed={selected} onClick={() => isAccords ? toggleAccord(option) : setAnswers((current) => ({ ...current, [steps[step].key]: option }))}
@@ -302,7 +357,23 @@ export default function MatchPage() {
               No notes matched that search. Try a broader term like <span className="text-parfang-text">rose</span>, <span className="text-parfang-text">musk</span>, or <span className="text-parfang-text">wood</span>.
             </p>
           )}
-          {activeInsight && (
+          {isAccords && totalNotePages > 1 && (
+            <div className="mx-auto mt-8 flex max-w-4xl items-center justify-between gap-4 rounded-2xl border border-parfang-border bg-parfang-surface px-4 py-4 text-left">
+              <div>
+                <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-parfang-muted">Notes page</p>
+                <p className="mt-1 font-body text-sm text-parfang-text">Page {notePage} of {totalNotePages}</p>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="ghost" disabled={notePage === 1} onClick={() => setNotePage((current) => Math.max(1, current - 1))}>
+                  <ArrowLeft className="h-4 w-4" /> Previous
+                </Button>
+                <Button variant="secondary" disabled={notePage === totalNotePages} onClick={() => setNotePage((current) => Math.min(totalNotePages, current + 1))}>
+                  Next <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+          {!isAccords && activeInsight && (
             <div className="mx-auto mt-8 max-w-3xl rounded-3xl border border-parfang-border bg-parfang-surface/90 p-6 text-left shadow-sm">
               <div className="grid gap-5 md:grid-cols-[1.15fr_0.85fr]">
                 <div>
@@ -338,12 +409,15 @@ export default function MatchPage() {
           )}
           {isAccords && answers.preferred_accords.length > 0 && (
             <p className="mx-auto mt-4 max-w-2xl font-body text-xs leading-relaxed text-parfang-muted md:text-sm">
-              Your selected accords act like anchors for the match engine. You do not need many; two to five strong signals usually work better than choosing everything.
+              Your selected notes act like anchors for the match engine. You do not need many; two to five strong signals usually work better than choosing everything.
             </p>
           )}
           {error && <p className="mt-6 font-body text-sm text-red-700">{error}</p>}
         </div>
-        <footer className="mt-10 flex items-center justify-between border-t border-parfang-border pt-6">
+        <footer className={cn(
+          'mt-10 flex items-center justify-between border-t border-parfang-border pt-6',
+          isAccords && 'sticky bottom-0 z-20 rounded-t-3xl border bg-parfang-bg/95 px-2 pb-2 backdrop-blur'
+        )}>
           <Button variant="ghost" disabled={step === 0 || loading} onClick={() => setStep((value) => value - 1)}><ArrowLeft className="h-4 w-4" /> Back</Button>
           {isAccords ? <Button disabled={!canContinue || loading} onClick={submit}>{loading ? 'Curating...' : 'Reveal My DNA'} <Sparkles className="h-4 w-4" /></Button> : <Button onClick={() => setStep((value) => value + 1)}>Next <ArrowRight className="h-4 w-4" /></Button>}
         </footer>
