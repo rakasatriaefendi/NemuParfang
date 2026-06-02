@@ -31,6 +31,7 @@ export default function PerfumeDetailPage() {
   const [reviewDraft, setReviewDraft] = useState({ rating: 0, content: '' });
   const [reviewError, setReviewError] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [isEditingReview, setIsEditingReview] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -83,6 +84,9 @@ export default function PerfumeDetailPage() {
   }, [id, session?.user.id]);
 
   const currentUserReview = session ? reviews.find((review) => review.userId === session.user.id) || null : null;
+  const communityReviews = session
+    ? reviews.filter((review) => review.userId !== session.user.id)
+    : reviews;
   const internalAverageRating = reviews.length
     ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1))
     : null;
@@ -98,6 +102,7 @@ export default function PerfumeDetailPage() {
         rating: currentUserReview.rating,
         content: currentUserReview.content,
       });
+      setIsEditingReview(false);
       return;
     }
 
@@ -134,6 +139,10 @@ export default function PerfumeDetailPage() {
         content: reviewDraft.content,
       });
       await refreshReviews();
+      setIsEditingReview(false);
+      if (!currentUserReview) {
+        setReviewDraft({ rating: 0, content: '' });
+      }
     } catch (error) {
       setReviewError(error instanceof Error ? error.message : 'Failed to save your review.');
     } finally {
@@ -150,6 +159,7 @@ export default function PerfumeDetailPage() {
       await removeReview(session, currentUserReview.id);
       await refreshReviews();
       setReviewDraft({ rating: 0, content: '' });
+      setIsEditingReview(false);
     } catch (error) {
       setReviewError(error instanceof Error ? error.message : 'Failed to delete your review.');
     } finally {
@@ -340,98 +350,127 @@ export default function PerfumeDetailPage() {
           <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 text-left">
             {/* Reviews Column */}
             <div className="lg:col-span-8 flex flex-col gap-6">
-              <div className="rounded-2xl border border-parfang-border bg-parfang-surface p-6">
-                <div className="flex flex-col gap-4">
-                  <div>
-                    <span className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent font-semibold">
-                      Community Review
-                    </span>
-                    <h3 className="mt-2 font-display text-2xl text-parfang-text font-bold">
-                      {currentUserReview ? 'Edit your impression' : 'Share your impression'}
-                    </h3>
-                    <p className="mt-2 max-w-2xl font-body text-sm leading-relaxed text-parfang-muted">
-                      Use a familiar 1 to 5 star rating, then add a short comment about wear, notes, or how the fragrance felt on skin.
-                    </p>
-                  </div>
-
-                  {session ? (
-                    <>
-                      <div className="flex flex-col gap-2">
-                        <span className="font-nav text-[10px] uppercase tracking-widest text-parfang-text font-bold">
-                          Your rating
-                        </span>
-                        <ReviewStars
-                          value={reviewDraft.rating}
-                          onChange={(value) => setReviewDraft((current) => ({ ...current, rating: value }))}
-                          interactive
-                          size={24}
-                        />
-                        <span className="font-body text-xs text-parfang-muted">
-                          {reviewDraft.rating > 0 ? `${reviewDraft.rating} of 5 stars` : 'Tap a star to rate'}
-                        </span>
+              {session && currentUserReview && !isEditingReview && (
+                <div className="rounded-2xl border border-parfang-border bg-parfang-surface p-6">
+                  <span className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent font-semibold">
+                    Your Review
+                  </span>
+                  <div className="mt-4 flex items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <ReviewStars value={currentUserReview.rating} size={18} />
+                        <span className="font-body text-xs text-parfang-muted">{currentUserReview.date}</span>
                       </div>
-
-                      <div className="flex flex-col gap-2">
-                        <label className="font-nav text-[10px] uppercase tracking-widest text-parfang-text font-bold">
-                          Your comment
-                        </label>
-                        <textarea
-                          value={reviewDraft.content}
-                          onChange={(event) => setReviewDraft((current) => ({ ...current, content: event.target.value }))}
-                          rows={5}
-                          maxLength={2000}
-                          placeholder="How does it wear, what stands out, and when would you reach for it?"
-                          className="min-h-[144px] rounded-xl border border-parfang-border bg-parfang-bg px-4 py-3 text-sm text-parfang-text outline-none transition focus:border-parfang-accent"
-                        />
-                        <div className="flex items-center justify-between text-xs text-parfang-muted">
-                          <span>{currentUserReview ? 'Update your existing review anytime.' : 'One review per fragrance per account.'}</span>
-                          <span>{reviewDraft.content.length}/2000</span>
-                        </div>
-                      </div>
-
-                      {reviewError && (
-                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                          {reviewError}
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Button onClick={handleSubmitReview} disabled={isSubmittingReview}>
-                          {isSubmittingReview ? 'Saving…' : currentUserReview ? 'Update Review' : 'Submit Review'}
-                        </Button>
-                        {currentUserReview && (
-                          <Button
-                            variant="secondary"
-                            onClick={handleDeleteReview}
-                            disabled={isSubmittingReview}
-                            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                          >
-                            Delete Review
-                          </Button>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="rounded-xl border border-parfang-border bg-parfang-bg px-4 py-4">
-                      <p className="font-body text-sm leading-relaxed text-parfang-muted">
-                        Sign in to leave a rating and comment for this fragrance.
+                      <p className="mt-4 font-body text-sm leading-relaxed text-parfang-text">
+                        {currentUserReview.content}
                       </p>
-                      <div className="mt-4">
-                        <Link href={`/login?redirect=/perfume/${id}`}>
-                          <Button>Login to Review</Button>
-                        </Link>
-                      </div>
                     </div>
-                  )}
+                    <div className="flex shrink-0 gap-2">
+                      <Button variant="secondary" onClick={() => setIsEditingReview(true)}>
+                        Edit Review
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={handleDeleteReview}
+                        disabled={isSubmittingReview}
+                        className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {reviews.length === 0 ? (
+              {(!currentUserReview || isEditingReview) && (
+                <div className="rounded-2xl border border-parfang-border bg-parfang-surface p-6">
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <span className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent font-semibold">
+                        Community Review
+                      </span>
+                      <h3 className="mt-2 font-display text-2xl text-parfang-text font-bold">
+                        {currentUserReview ? 'Edit your impression' : 'Share your impression'}
+                      </h3>
+                      <p className="mt-2 max-w-2xl font-body text-sm leading-relaxed text-parfang-muted">
+                        Use a familiar 1 to 5 star rating, then add a short comment about wear, notes, or how the fragrance felt on skin.
+                      </p>
+                    </div>
+
+                    {session ? (
+                      <>
+                        <div className="flex flex-col gap-2">
+                          <span className="font-nav text-[10px] uppercase tracking-widest text-parfang-text font-bold">
+                            Your rating
+                          </span>
+                          <ReviewStars
+                            value={reviewDraft.rating}
+                            onChange={(value) => setReviewDraft((current) => ({ ...current, rating: value }))}
+                            interactive
+                            size={24}
+                          />
+                          <span className="font-body text-xs text-parfang-muted">
+                            {reviewDraft.rating > 0 ? `${reviewDraft.rating} of 5 stars` : 'Tap a star to rate'}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <label className="font-nav text-[10px] uppercase tracking-widest text-parfang-text font-bold">
+                            Your comment
+                          </label>
+                          <textarea
+                            value={reviewDraft.content}
+                            onChange={(event) => setReviewDraft((current) => ({ ...current, content: event.target.value }))}
+                            rows={5}
+                            maxLength={2000}
+                            placeholder="How does it wear, what stands out, and when would you reach for it?"
+                            className="min-h-[144px] rounded-xl border border-parfang-border bg-parfang-bg px-4 py-3 text-sm text-parfang-text outline-none transition focus:border-parfang-accent"
+                          />
+                          <div className="flex items-center justify-between text-xs text-parfang-muted">
+                            <span>{currentUserReview ? 'Update your existing review anytime.' : 'One review per fragrance per account.'}</span>
+                            <span>{reviewDraft.content.length}/2000</span>
+                          </div>
+                        </div>
+
+                        {reviewError && (
+                          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                            {reviewError}
+                          </div>
+                        )}
+
+                        <div className="flex flex-wrap items-center gap-3">
+                          <Button onClick={handleSubmitReview} disabled={isSubmittingReview}>
+                            {isSubmittingReview ? 'Saving…' : currentUserReview ? 'Update Review' : 'Submit Review'}
+                          </Button>
+                          {currentUserReview && (
+                            <Button variant="secondary" onClick={() => setIsEditingReview(false)}>
+                              Cancel
+                            </Button>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="rounded-xl border border-parfang-border bg-parfang-bg px-4 py-4">
+                        <p className="font-body text-sm leading-relaxed text-parfang-muted">
+                          Sign in to leave a rating and comment for this fragrance.
+                        </p>
+                        <div className="mt-4">
+                          <Link href={`/login?redirect=/perfume/${id}`}>
+                            <Button>Login to Review</Button>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {communityReviews.length === 0 ? (
                 <div className="p-8 border border-parfang-border rounded-xl bg-parfang-surface text-center text-parfang-muted">
                   No community reviews submitted yet for this fragrance.
                 </div>
               ) : (
-                reviews.map((rev) => (
+                communityReviews.map((rev) => (
                   <div key={rev.id} className="bg-parfang-surface border border-parfang-border/50 p-6 rounded-xl shadow-sm">
                     <div className="flex justify-between items-center mb-3">
                       <div className="flex items-center gap-3">
