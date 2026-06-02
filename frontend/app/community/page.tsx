@@ -293,7 +293,7 @@ export default function CommunityPage() {
         </div>
       </Container>
 
-      <div className="sticky top-24 z-30 border-b border-parfang-border/60 bg-parfang-bg/95 backdrop-blur-md md:top-28">
+      <div className="border-b border-parfang-border/60 bg-parfang-bg">
         <Container className="py-4">
           <div className="max-w-3xl">
             <div className="flex w-full items-center gap-3 rounded-full border border-parfang-border bg-parfang-surface px-4 py-3 shadow-sm">

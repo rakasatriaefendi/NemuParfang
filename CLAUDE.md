@@ -3,7 +3,7 @@
 ## Identitas Proyek
 
 **Nama:** NemuParfang  
-**Tagline:** *Skip the sniff, just pick and click!*  
+**Tagline:** *Skip the sniff, just click and pick! *  
 **Deskripsi singkat:** Platform AI-powered untuk rekomendasi dan eksplorasi parfum personal.  
 **Stack utama:** Next.js 14, TailwindCSS, shadcn/ui, Supabase, Python (FastAPI untuk ML)
 
