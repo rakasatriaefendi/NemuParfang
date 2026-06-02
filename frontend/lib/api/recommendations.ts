@@ -2,7 +2,21 @@ import { fetchApi } from './client';
 import { getPerfumeById, getPerfumesPage } from './perfumes';
 import { MlMatchRequest, MlMatchResponse, Perfume } from '../types';
 
-const toPercentage = (score: number) => Math.round(Math.max(72, Math.min(98, 72 + score * 8)));
+const normalizeMatchPercentages = (scores: number[]) => {
+  if (scores.length === 0) return [];
+
+  const min = Math.min(...scores);
+  const max = Math.max(...scores);
+
+  if (min === max) {
+    return scores.map((_, index) => Math.max(70, 84 - index * 3));
+  }
+
+  return scores.map((score) => {
+    const normalized = (score - min) / (max - min);
+    return Math.round(68 + normalized * 28);
+  });
+};
 
 export async function getAiMatch(input: MlMatchRequest): Promise<{
   perfumes: Perfume[];
@@ -13,8 +27,13 @@ export async function getAiMatch(input: MlMatchRequest): Promise<{
     body: JSON.stringify(input),
   });
 
+  const uniqueRecommendations = Array.from(
+    new Map(result.recommendations.map((item) => [item.id, item])).values(),
+  );
+  const percentageScores = normalizeMatchPercentages(uniqueRecommendations.map((item) => item.match_score));
+
   const perfumes = await Promise.all(
-    result.recommendations.map(async (item) => {
+    uniqueRecommendations.map(async (item, index) => {
       const hydrated = await getPerfumeById(String(item.id));
       const accords = item.accords
         .split(',')
@@ -26,7 +45,7 @@ export async function getAiMatch(input: MlMatchRequest): Promise<{
           ...hydrated,
           rating: item.rating,
           reviewCount: item.review_count,
-          matchScore: toPercentage(item.match_score),
+          matchScore: percentageScores[index],
           recommendationReason: `Selected for its ${item.accords.split(',').slice(0, 3).join(', ')} accord alignment and ${item.gender} profile.`,
           accords: hydrated.accords.length > 0 ? hydrated.accords : accords,
           description:
@@ -50,7 +69,7 @@ export async function getAiMatch(input: MlMatchRequest): Promise<{
         imageUrl: '/assets/perfume-placeholder.webp',
         rating: item.rating,
         reviewCount: item.review_count,
-        matchScore: toPercentage(item.match_score),
+        matchScore: percentageScores[index],
         recommendationReason: `Selected for its ${item.accords.split(',').slice(0, 3).join(', ')} accord alignment and ${item.gender} profile.`,
       } satisfies Perfume;
     })

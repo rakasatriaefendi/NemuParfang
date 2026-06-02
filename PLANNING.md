@@ -116,6 +116,111 @@ Ini berarti schema, relasi many-to-many, image URL parfum, dan proses seed katal
 
 ---
 
+### Status Update Phase 3
+
+- `Current Reality`
+  Phase 3 bukan start from zero. Quiz UI, endpoint `/match`, encoder, Pinecone retrieval, dan ranker serving sudah ada embrionya di stack saat ini. Fokus awal Phase 3 sebaiknya bukan "membuat AI dari nol", tetapi mengeraskan serving, mengukur kualitas, lalu mengganti fallback rule-based secara bertahap hanya ketika hasil ML sudah cukup stabil.
+- `Important Principle`
+  Rule-based recommendation yang sudah ada jangan dibuang. Ia dipakai sebagai baseline, fallback, dan pembanding kualitas model. ML baru boleh menjadi jalur utama jika hasilnya lebih masuk akal, lebih konsisten, dan lebih bisa dijelaskan dibanding baseline tersebut.
+- `Goal of This Phase`
+  Bukan mencari model yang sempurna, tetapi membangun AI yang:
+  1. cukup bagus untuk didemonstrasikan,
+  2. punya fallback jika model lemah,
+  3. dapat dijelaskan ke user,
+  4. dan bisa dievaluasi dengan patokan yang jelas.
+
+### Audit Readiness Phase 3
+
+- `Partially Exists`
+  - Fragrance similarity retrieval di service ML sudah ada lewat encoder + Pinecone pada endpoint `/perfumes/{id}/similar`.
+  - AI Match flow sudah ada lewat quiz frontend + endpoint `/match` + ranker + hydration hasil ke katalog nyata.
+  - Result page dan explainability ringan untuk quiz juga sudah ada di frontend.
+- `Exists as Rule-Based Baseline`
+  - Similar perfumes di detail page berbasis shared notes/accords.
+  - You might like di homepage berbasis koleksi favorites.
+  - Mood, occasion, weather, dan accord guidance sudah ada di level UX copy walau belum menjadi model ML terpisah.
+- `Not Started Properly`
+  - Review sentiment analysis end-to-end.
+  - Collaborative filtering berbasis perilaku user nyata.
+  - Weather integration live dari API eksternal.
+  - Evaluasi formal model dan quality benchmark yang terdokumentasi.
+
+### Prioritas Pengerjaan Phase 3
+
+1. `AI Perfume Match Predictor Hardening`
+   Ini prioritas tertinggi karena sudah punya permukaan produk yang jelas, paling mudah didemokan, dan paling terasa "AI"-nya ke user.
+2. `Fragrance Similarity Engine Consolidation`
+   Setelah match stabil, similarity engine perlu dibereskan agar retrieval, explainability, dan top-k recommendations konsisten.
+3. `Mood-to-Perfume AI`
+   Setelah predictor inti stabil, mood dapat dibangun sebagai varian rekomendasi yang lebih ringan dan eksploratif.
+4. `Review Sentiment Analysis`
+   Berguna sebagai enrichment, tetapi bukan fitur discovery utama.
+5. `Weather Integration`
+   Cocok sebagai input tambahan atau bonus personalization, bukan fondasi pertama.
+6. `Collaborative Filtering`
+   Paling akhir karena butuh data interaksi user yang cukup agar hasilnya tidak terlalu tipis atau noisy.
+
+### Definition of Done per Fitur
+
+- `Fragrance Similarity Engine`
+  - Ada vector representation yang konsisten untuk parfum.
+  - Top-k similar results tidak didominasi parfum acak atau duplikat semantik.
+  - Ada fallback rule-based jika vector retrieval gagal.
+  - Ada evaluasi manual minimal pada sampel parfum populer untuk memastikan hasilnya masuk akal.
+- `AI Perfume Match Predictor`
+  - Quiz menghasilkan top-N parfum nyata dari katalog Supabase, bukan placeholder.
+  - Jalur prediction stabil di production dengan timeout, fallback, dan error handling yang jelas.
+  - Output memiliki alasan yang bisa dijelaskan, misalnya lewat accord alignment, cuaca, style, atau note overlap.
+  - Hasil dievaluasi terhadap baseline rule-based dan dinilai cukup baik untuk demo.
+- `Mood-to-Perfume AI`
+  - User dapat memilih mood dengan mapping yang jelas ke signature aroma.
+  - Output tidak terasa generik atau sama untuk semua mood.
+  - Ada fallback rule-based jika model mood belum cukup kuat.
+- `Review Sentiment Analysis`
+  - Review dapat diklasifikasi setidaknya menjadi positive / neutral / negative.
+  - Ada ekstraksi keyword ringan untuk menjelaskan alasan klasifikasi.
+  - Tidak menyesatkan user jika confidence model rendah.
+- `Collaborative Filtering`
+  - Hanya diaktifkan jika data favorites / likes / review interactions sudah cukup.
+  - Ada threshold minimum data agar fitur tidak memunculkan rekomendasi yang terlalu tipis.
+- `Weather Integration`
+  - API cuaca live terhubung dengan andal.
+  - Rekomendasi cuaca terasa masuk akal dan tidak mendominasi preferensi personal user.
+
+### Baseline vs ML Strategy
+
+- `Baseline`
+  Rule-based tetap menjadi pembanding utama untuk similar perfumes, mood reasoning, dan preference matching.
+- `ML Layer`
+  ML dipakai untuk meningkatkan ranking, memperkaya retrieval, dan memperhalus personalisasi, bukan sekadar menggantikan semua logika lama secara paksa.
+- `Fallback`
+  Jika model gagal, timeout, atau hasil terlalu lemah, frontend harus tetap bisa kembali ke rule-based recommendation atau state yang aman.
+
+### Evaluasi & Akurasi
+
+- `Do Not Chase Perfect Accuracy`
+  Karena parfum sangat subjektif, target awal bukan akurasi absolut, tetapi kualitas rekomendasi yang:
+  - konsisten,
+  - dapat dijelaskan,
+  - dan cukup meyakinkan untuk demo maupun portfolio.
+- `Evaluation Signals`
+  - Manual review terhadap sampel parfum populer.
+  - Perbandingan hasil ML vs rule-based baseline.
+  - Cek apakah top recommendations masih berada dalam keluarga accord/note yang logis.
+  - Cek apakah output berubah sesuai input user, bukan terasa statis.
+- `If Model Quality Is Weak`
+  - turunkan peran model menjadi ranking assist,
+  - pertahankan rule-based sebagai jalur utama,
+  - dan dokumentasikan bahwa model masih experimental.
+
+### First Execution Plan for Phase 3
+
+1. Audit jalur `/match` yang sudah ada: input, output, latency, fallback, dan hydration data nyata.
+2. Tetapkan benchmark kecil untuk menilai kualitas hasil pada beberapa profil user contoh.
+3. Rapikan serving `AI Perfume Match Predictor` sampai stabil di production.
+4. Baru konsolidasikan `Fragrance Similarity Engine`.
+5. Setelah dua fondasi ini stabil, lanjut ke `Mood-to-Perfume AI`.
+
 ### Phase 4 — Polish & Deployment (Minggu 11–12)
 > Tujuan: Produk siap dipresentasikan dan diakses publik
 

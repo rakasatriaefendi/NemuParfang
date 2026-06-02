@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, ArrowLeft, ArrowRight, Check, Sparkles } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Check, Search, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { getAiMatch } from '@/lib/api/recommendations';
+import { getQuizNoteOptions } from '@/lib/api/perfumes';
 import { MlMatchRequest } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -23,7 +24,7 @@ const steps = [
   { key: 'activity', title: 'Where will it join you?', subtitle: 'A fragrance should understand the room.', options: ['office', 'date', 'casual', 'sport', 'formal'] },
   { key: 'weather', title: 'What is the atmosphere?', subtitle: 'Temperature changes how a fragrance unfolds.', options: ['hot', 'warm', 'cool', 'cold'] },
 ] as const;
-const accordOptions = ['woody', 'fresh', 'floral', 'sweet', 'amber', 'citrus', 'musky', 'warm spicy', 'oud', 'gourmand', 'marine', 'green', 'powdery', 'aromatic'];
+const fallbackNoteOptions = ['amber', 'aromatic', 'citrus', 'floral', 'fresh', 'gourmand', 'green', 'marine', 'musky', 'oud', 'powdery', 'sweet', 'warm spicy', 'woody'];
 
 const pretty = (value: string) => value.replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 
@@ -183,6 +184,8 @@ export default function MatchPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<MlMatchRequest>({ age_group: 'young_adult', activity: 'casual', weather: 'warm', style: 'elegant', preferred_accords: [], gender: 'unisex', top_k: 5 });
+  const [noteOptions, setNoteOptions] = useState<string[]>(fallbackNoteOptions);
+  const [noteQuery, setNoteQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const isAccords = step === steps.length;
@@ -190,10 +193,33 @@ export default function MatchPage() {
   const currentStep = !isAccords ? steps[step] : null;
   const currentValue = currentStep ? answers[currentStep.key] : null;
 
+  useEffect(() => {
+    let cancelled = false;
+    getQuizNoteOptions().then((options) => {
+      if (!cancelled && options.length > 0) {
+        setNoteOptions(options);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filteredNoteOptions = useMemo(() => {
+    const needle = noteQuery.trim().toLowerCase();
+    if (!needle) return noteOptions;
+    return noteOptions.filter((option) => option.toLowerCase().includes(needle));
+  }, [noteOptions, noteQuery]);
+
   const activeInsight = (() => {
     if (isAccords) {
       const selectedAccord = answers.preferred_accords[answers.preferred_accords.length - 1];
-      return selectedAccord ? accordInsights[selectedAccord] : null;
+      return selectedAccord ? accordInsights[selectedAccord] || {
+        label: pretty(selectedAccord),
+        summary: `${pretty(selectedAccord)} becomes another personal signal for the match engine, helping it pull candidates with related notes, accords, or scent texture.`,
+        notes: 'Usually fits when it reflects a note or smell family you repeatedly enjoy in real perfumes.',
+        caution: 'Avoid selecting everything. Too many mixed signals can make the final profile feel vague and less personal.',
+      } : null;
     }
 
     if (!currentStep || typeof currentValue !== 'string') return null;
@@ -240,9 +266,27 @@ export default function MatchPage() {
         <div className="mx-auto w-full max-w-5xl flex-1 text-center">
           <p className="font-handwrite text-3xl text-parfang-accent">{String(step + 1).padStart(2, '0')} / 0{steps.length + 1}</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl">{isAccords ? 'Which notes pull you closer?' : steps[step].title}</h1>
-          <p className="mx-auto mt-3 max-w-xl font-body text-sm text-parfang-muted md:text-base">{isAccords ? 'Select up to five accords. A small constellation is enough.' : steps[step].subtitle}</p>
+          <p className="mx-auto mt-3 max-w-xl font-body text-sm text-parfang-muted md:text-base">{isAccords ? 'Select up to five notes or accords. Search helps when you already know a note you love.' : steps[step].subtitle}</p>
+          {isAccords && (
+            <div className="mx-auto mt-8 max-w-md">
+              <label className="block text-left font-nav text-[10px] uppercase tracking-[0.16em] text-parfang-muted" htmlFor="match-note-search">
+                Search notes
+              </label>
+              <div className="mt-2 flex items-center gap-3 rounded-full border border-parfang-border bg-parfang-surface px-4 py-3 shadow-sm">
+                <Search className="h-4 w-4 text-parfang-muted" />
+                <input
+                  id="match-note-search"
+                  type="search"
+                  value={noteQuery}
+                  onChange={(event) => setNoteQuery(event.target.value)}
+                  placeholder="Try lavender, bergamot, iris..."
+                  className="w-full bg-transparent font-body text-sm text-parfang-text outline-none placeholder:text-parfang-muted"
+                />
+              </div>
+            </div>
+          )}
           <div className={cn('mx-auto mt-10 grid gap-4 text-left', isAccords ? 'grid-cols-2 md:grid-cols-4' : 'max-w-4xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3')}>
-            {(isAccords ? accordOptions : [...steps[step].options]).map((option) => {
+            {(isAccords ? filteredNoteOptions : [...steps[step].options]).map((option) => {
               const selected = isAccords ? answers.preferred_accords.includes(option) : answers[steps[step].key] === option;
               return (
                 <button key={option} type="button" aria-pressed={selected} onClick={() => isAccords ? toggleAccord(option) : setAnswers((current) => ({ ...current, [steps[step].key]: option }))}
@@ -253,6 +297,11 @@ export default function MatchPage() {
               );
             })}
           </div>
+          {isAccords && filteredNoteOptions.length === 0 && (
+            <p className="mx-auto mt-6 max-w-lg rounded-2xl border border-parfang-border bg-parfang-surface px-5 py-4 text-left font-body text-sm text-parfang-muted">
+              No notes matched that search. Try a broader term like <span className="text-parfang-text">rose</span>, <span className="text-parfang-text">musk</span>, or <span className="text-parfang-text">wood</span>.
+            </p>
+          )}
           {activeInsight && (
             <div className="mx-auto mt-8 max-w-3xl rounded-3xl border border-parfang-border bg-parfang-surface/90 p-6 text-left shadow-sm">
               <div className="grid gap-5 md:grid-cols-[1.15fr_0.85fr]">

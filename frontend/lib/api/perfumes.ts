@@ -96,6 +96,10 @@ interface PerfumeFilters {
   sortBy?: 'rating' | 'reviews' | 'latest' | 'az';
 }
 
+type NamedRow = {
+  name: string;
+};
+
 const filterByNote = (perfumes: Perfume[], note?: string) => {
   if (!note || note === 'All') return perfumes;
   const needle = note.toLowerCase();
@@ -249,4 +253,48 @@ export async function getPerfumeById(id: string): Promise<Perfume | null> {
 export async function getFeaturedPerfumes(): Promise<Perfume[]> {
   const perfumes = await getPerfumes();
   return perfumes.sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 3);
+}
+
+export async function getQuizNoteOptions(): Promise<string[]> {
+  const fallback = [
+    'amber',
+    'aromatic',
+    'citrus',
+    'floral',
+    'fresh',
+    'gourmand',
+    'green',
+    'marine',
+    'musky',
+    'oud',
+    'powdery',
+    'sweet',
+    'warm spicy',
+    'woody',
+  ];
+
+  if (!hasSupabasePublicConfig()) {
+    return fallback.sort((left, right) => left.localeCompare(right));
+  }
+
+  try {
+    const [notesRows, accordRows] = await Promise.all([
+      supabaseRest<NamedRow[]>('notes?select=name&order=name.asc'),
+      supabaseRest<NamedRow[]>('accords?select=name&order=name.asc'),
+    ]);
+
+    const merged = Array.from(
+      new Map(
+        notesRows
+          .concat(accordRows)
+          .map((row) => row.name?.trim())
+          .filter((value): value is string => Boolean(value))
+          .map((name) => [name.toLowerCase(), name]),
+      ).values(),
+    );
+
+    return merged.sort((left, right) => left.localeCompare(right));
+  } catch {
+    return fallback.sort((left, right) => left.localeCompare(right));
+  }
 }
