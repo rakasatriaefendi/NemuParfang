@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 import { Container } from '@/components/shared/Container';
 import { loadPublicFavoriteIds, loadPublicProfile } from '@/lib/api/profile';
 import { loadUserReviews } from '@/lib/api/reviews';
@@ -89,6 +90,14 @@ export default function PublicProfilePage() {
   return (
     <div className="min-h-screen bg-parfang-bg py-14">
       <Container>
+        <Link
+          href="/community"
+          className="mb-6 inline-flex items-center gap-2 font-nav text-[10px] uppercase tracking-widest text-parfang-accent transition hover:text-parfang-text"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to community
+        </Link>
+
         <div className="rounded-3xl border border-parfang-border bg-parfang-surface p-8">
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">

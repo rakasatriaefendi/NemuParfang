@@ -59,22 +59,22 @@ export const Footer = () => {
           </h4>
           <ul className="space-y-4">
             <li>
-              <Link href="#" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
+              <Link href="/about" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
                 About Our Vision
               </Link>
             </li>
             <li>
-              <Link href="#" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
-                Fragrance Journal
+              <Link href="/community" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
+                Community Notes
               </Link>
             </li>
             <li>
-              <Link href="#" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
+              <Link href="/about#privacy" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="#" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
+              <Link href="/about#terms" className="font-body text-xs md:text-sm text-parfang-muted hover:text-parfang-accent hover:underline decoration-parfang-accent/20 transition-all">
                 Terms of Service
               </Link>
             </li>

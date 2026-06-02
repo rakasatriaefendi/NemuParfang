@@ -61,7 +61,7 @@ export const Navbar = () => {
     { name: 'Explore', href: '/explore', hasMegaMenu: true },
     { name: 'AI Match', href: '/match', icon: <Sparkles className="w-3.5 h-3.5 text-parfang-accent" /> },
     { name: 'Mood', href: '/mood', icon: <Wind className="w-3.5 h-3.5 text-parfang-accent" /> },
-    { name: 'About', href: '#' },
+    { name: 'About', href: '/about' },
     { name: 'Community', href: '/community' },
   ];
 
