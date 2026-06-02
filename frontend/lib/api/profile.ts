@@ -74,3 +74,29 @@ export const loadPublicFavoriteIds = async (profileId: string): Promise<string[]
   const rows = (await response.json()) as { perfume_id: number | string }[];
   return rows.map((row) => String(row.perfume_id));
 };
+
+export const searchPublicProfiles = async (query: string, limit = 6): Promise<ProfileRecord[]> => {
+  if (!ENV.HAS_SUPABASE || !query.trim()) return [];
+
+  const params = new URLSearchParams({
+    select: 'id,username,display_name,avatar_url,bio,is_public,show_favorites,show_reviews',
+    is_public: 'is.true',
+    order: 'username.asc',
+    limit: String(limit),
+  });
+
+  const needle = query.trim();
+  params.set('or', `(username.ilike.*${needle}*,display_name.ilike.*${needle}*)`);
+
+  const response = await fetch(`${ENV.SUPABASE_URL}/rest/v1/profiles?${params.toString()}`, {
+    headers: {
+      apikey: ENV.SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${ENV.SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+  });
+
+  if (!response.ok) return [];
+  return (await response.json()) as ProfileRecord[];
+};

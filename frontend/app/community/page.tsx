@@ -4,7 +4,7 @@ import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, ImagePlus, MessageCircle, Repeat2, Search, Share2, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, Heart, ImagePlus, MessageCircle, Repeat2, Search, Share2, Sparkles, X } from 'lucide-react';
 import { Container } from '@/components/shared/Container';
 import { Button } from '@/components/ui/Button';
 import { useAuthSession } from '@/components/auth/AuthProvider';
@@ -16,7 +16,8 @@ import {
   toggleCommunityRepost,
   uploadCommunityImage,
 } from '@/lib/api/community';
-import { CommunityPost } from '@/lib/types';
+import { searchPublicProfiles } from '@/lib/api/profile';
+import { CommunityPost, ProfileRecord } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const MAX_POST_IMAGE_BYTES = 4 * 1024 * 1024;
@@ -36,6 +37,8 @@ export default function CommunityPage() {
   const [isPosting, setIsPosting] = useState(false);
   const [flashMessage, setFlashMessage] = useState('');
   const [feedError, setFeedError] = useState('');
+  const [peopleResults, setPeopleResults] = useState<ProfileRecord[]>([]);
+  const [isPeopleLoading, setIsPeopleLoading] = useState(false);
   const [isSearchCompact, setIsSearchCompact] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
@@ -77,6 +80,36 @@ export default function CommunityPage() {
       window.clearTimeout(timeout);
     };
   }, [search, session?.user.id]);
+
+  useEffect(() => {
+    let active = true;
+
+    if (!search.trim()) {
+      setPeopleResults([]);
+      setIsPeopleLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    const timeout = window.setTimeout(async () => {
+      setIsPeopleLoading(true);
+      try {
+        const matches = await searchPublicProfiles(search, 6);
+        if (!active) return;
+        setPeopleResults(matches);
+      } finally {
+        if (active) {
+          setIsPeopleLoading(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timeout);
+    };
+  }, [search]);
 
   const displayName = profile?.display_name || session?.user.displayName || session?.user.email;
   const stickyExpanded = !isSearchCompact || isSearchExpanded;
@@ -257,6 +290,13 @@ export default function CommunityPage() {
     <div className="min-h-screen bg-parfang-bg pb-24">
       <Container className="pt-10">
         <div className="border-b border-parfang-border pb-8 text-left">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 font-nav text-[10px] uppercase tracking-widest text-parfang-accent transition hover:text-parfang-text"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to home
+          </Link>
           <p className="font-handwrite text-3xl text-parfang-accent">Community exchange</p>
           <h1 className="mt-2 font-display text-5xl text-parfang-text">Shared scent notes</h1>
           <p className="mt-3 max-w-3xl font-body text-sm leading-relaxed text-parfang-muted">
@@ -265,13 +305,13 @@ export default function CommunityPage() {
         </div>
       </Container>
 
-      <div className="sticky top-20 z-30 border-b border-parfang-border/50 bg-parfang-bg/95 backdrop-blur-md">
+      <div className="sticky top-24 z-30 border-b border-parfang-border/60 bg-parfang-bg/95 backdrop-blur-md md:top-28">
         <Container className="py-4">
-          <div className="flex items-center justify-between gap-4">
+          <div className={cn('transition-all duration-300', stickyExpanded ? 'max-w-3xl' : 'max-w-sm')}>
             <div
               className={cn(
-                'flex items-center gap-3 rounded-full border border-parfang-border bg-parfang-surface px-4 py-2 transition-all duration-300',
-                stickyExpanded ? 'w-full max-w-xl' : 'w-14 justify-center',
+                'flex items-center gap-3 rounded-full border border-parfang-border bg-parfang-surface px-4 py-3 shadow-sm transition-all duration-300',
+                stickyExpanded ? 'w-full' : 'w-14 justify-center',
               )}
             >
               <button
@@ -286,13 +326,19 @@ export default function CommunityPage() {
                   type="text"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Search posts, moods, brands, or people..."
+                  placeholder="Search posts or public profiles..."
                   className="w-full bg-transparent text-sm text-parfang-text outline-none"
                 />
               )}
             </div>
             {!stickyExpanded && (
-              <span className="hidden font-nav text-[10px] uppercase tracking-widest text-parfang-muted md:block">Search community</span>
+              <button
+                type="button"
+                onClick={() => setIsSearchExpanded(true)}
+                className="mt-2 hidden font-nav text-[10px] uppercase tracking-widest text-parfang-muted transition hover:text-parfang-accent md:inline-flex"
+              >
+                Search community
+              </button>
             )}
           </div>
         </Container>
@@ -300,6 +346,64 @@ export default function CommunityPage() {
 
       <Container className="grid gap-8 py-10 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-6">
+          {search.trim() && (
+            <section className="rounded-3xl border border-parfang-border bg-parfang-surface p-6 text-left">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <span className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent">People</span>
+                  <h2 className="mt-3 font-display text-3xl text-parfang-text">Public profiles</h2>
+                </div>
+                {isPeopleLoading && (
+                  <span className="font-body text-xs uppercase tracking-widest text-parfang-muted">Searching...</span>
+                )}
+              </div>
+
+              <div className="mt-5 grid gap-3">
+                {peopleResults.map((person) => (
+                  <Link
+                    key={person.id}
+                    href={person.username ? `/u/${person.username}` : '/community'}
+                    className="flex items-center gap-4 rounded-2xl border border-parfang-border bg-parfang-bg px-4 py-4 transition hover:border-parfang-accent"
+                  >
+                    <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-parfang-border bg-parfang-surface text-sm font-nav uppercase tracking-widest text-parfang-muted">
+                      {person.avatar_url ? (
+                        <Image
+                          src={person.avatar_url}
+                          alt={person.display_name || person.username || 'Public profile'}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        (person.display_name || person.username || 'N').slice(0, 1)
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate font-body text-sm font-medium text-parfang-text">
+                        {person.display_name || person.username || 'Public profile'}
+                      </p>
+                      {person.username && (
+                        <p className="truncate font-body text-xs text-parfang-accent">@{person.username}</p>
+                      )}
+                      {person.bio && (
+                        <p className="mt-1 line-clamp-2 font-body text-xs leading-relaxed text-parfang-muted">
+                          {person.bio}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+
+                {!isPeopleLoading && peopleResults.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-parfang-border bg-parfang-bg px-4 py-5">
+                    <p className="font-body text-sm text-parfang-muted">
+                      No public profiles matched "{search.trim()}".
+                    </p>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
           <section className="rounded-3xl border border-parfang-border bg-parfang-surface p-6 text-left">
             <span className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent">Create post</span>
             <h2 className="mt-3 font-display text-3xl text-parfang-text">What are you wearing today?</h2>
@@ -370,7 +474,7 @@ export default function CommunityPage() {
                     />
                   </label>
                   <Button onClick={handlePublish} disabled={isPosting}>
-                    {isPosting ? 'Publishing…' : 'Publish post'}
+                    {isPosting ? 'Publishing...' : 'Publish post'}
                   </Button>
                   <span className="font-body text-xs text-parfang-muted">{draft.length}/2000</span>
                 </div>

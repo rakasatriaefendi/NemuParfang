@@ -18,7 +18,7 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { session, profile } = useAuthSession();
   const displayName = profile?.display_name || session?.user.displayName || session?.user.email.split('@')[0];
-  const hideGlobalSearch = pathname === '/explore';
+  const hideGlobalSearch = pathname === '/explore' || pathname === '/community';
 
   // Monitor scroll behavior to trigger compact header
   useEffect(() => {
