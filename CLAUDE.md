@@ -3,7 +3,7 @@
 ## Identitas Proyek
 
 **Nama:** NemuParfang  
-**Tagline:** *Skip the sniff, just click and pick!*  
+**Tagline:** *Skip the sniff, just pick and click!*  
 **Deskripsi singkat:** Platform AI-powered untuk rekomendasi dan eksplorasi parfum personal.  
 **Stack utama:** Next.js 14, TailwindCSS, shadcn/ui, Supabase, Python (FastAPI untuk ML)
 
@@ -31,11 +31,11 @@ Proyek ini memiliki empat phase:
 - **Animasi:** Framer Motion
 
 ### Backend
-- **API Routes:** Next.js API Routes (untuk CRUD sederhana)
-- **ML API:** FastAPI (Python) — dihosting terpisah di Railway/Render
+- **API Routes:** Next.js API Routes / middleware seperlunya untuk UX dan route protection
+- **ML API:** FastAPI (Python) — dihosting terpisah di Hugging Face Spaces / platform inference lain
 - **Auth:** Supabase Auth (email/password + OAuth Google)
 - **Database:** Supabase (PostgreSQL)
-- **Storage:** Supabase Storage (untuk gambar parfum)
+- **Storage:** External image URLs untuk katalog parfum MVP, Supabase Storage hanya bila benar-benar diperlukan
 
 ### Machine Learning (Python)
 - **Library:** scikit-learn, pandas, numpy
@@ -48,6 +48,18 @@ Proyek ini memiliki empat phase:
 - **Frontend:** Vercel
 - **ML API:** Railway atau Render
 - **Database & Auth:** Supabase Cloud
+
+## Progress Terkini
+
+- **Phase 1** secara substansial selesai
+- Dataset Supabase penuh sudah masuk:
+  - `70103 perfumes`
+  - `1867 notes`
+  - `88 accords`
+  - `437781 perfume_notes`
+  - `329093 perfume_accords`
+- Favorites, wardrobe, login/register, profile, dan protected routes sudah usable
+- FastAPI service tetap diperlakukan sebagai backend ML/recommendation terpisah
 
 ---
 
@@ -78,7 +90,6 @@ nemuparfang/
 │   ├── data/
 │   └── requirements.txt
 ├── ml_training_notebooks/      # Offline training and notebook artifacts
-├── package.json                # Root wrapper scripts for frontend commands
 └── CLAUDE.md
 ```
 
@@ -298,7 +309,7 @@ POST /api/sentiment
 2. **Seed data parfum** — mulai dengan 50–100 parfum populer (Dior, YSL, Versace, Tom Ford, dll) sebagai data awal yang representatif.
 3. **NotesPyramid component** — ini fitur visual kunci. Buat interaktif dan animasi. Jangan plain text.
 4. **ML API terpisah** — jangan taruh Python di dalam Next.js. FastAPI jalan di service terpisah, komunikasi lewat HTTP.
-5. **Image parfum** — simpan di Supabase Storage, atau fallback ke URL eksternal (Fragrantica/Amazon) untuk MVP.
+5. **Image parfum** — untuk MVP katalog penuh, gunakan URL eksternal yang diturunkan dari `source_url` Fragrantica. Jangan paksa upload puluhan ribu gambar ke storage project kecil.
 6. **Cold start recommendation** — untuk user baru yang belum punya favorites, tampilkan rekomendasi berbasis popularitas atau "top rated".
 7. **Mobile first** — banyak user parfum Indonesia browsing lewat HP.
 
@@ -308,9 +319,10 @@ POST /api/sentiment
 
 ```bash
 # Install dependencies
+cd frontend
 npm install
 
-# Jalankan dev server Next.js (wrapper ke folder frontend/)
+# Jalankan dev server Next.js
 npm run dev
 
 # Type-check frontend

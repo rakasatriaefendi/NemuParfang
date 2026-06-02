@@ -31,7 +31,7 @@
 > Tujuan: Aplikasi bisa berjalan dengan fitur dasar
 
 **Backend & Database**
-- [~] Setup project Next.js + Supabase
+- [x] Setup project Next.js + Supabase
 - [x] Desain skema database (tabel: perfumes, notes, accords, users, reviews, favorites)
 - [x] Seed data parfum awal (minimal 50–100 parfum dari dataset publik)
 - [x] API endpoint: GET perfumes, GET perfume by ID, GET notes
@@ -40,11 +40,11 @@
 - [x] Landing page NemuParfang
 - [x] Halaman catalog / browse parfum
 - [x] Halaman detail parfum (notes pyramid visual, accords, info lengkap)
-- [~] Search bar + filter dasar (gender, season, occasion, concentration)
+- [x] Search bar + filter dasar (disesuaikan dengan field dataset yang tersedia: search, gender, notes/accords)
 
 **Auth**
-- [~] Register & login (Supabase Auth)
-- [~] Protected routes
+- [x] Register & login (Supabase Auth)
+- [x] Protected routes
 - [x] User profile page (minimal)
 
 **Deliverable Phase 1:** User bisa daftar, login, browse parfum, lihat detail, dan filter.
@@ -52,23 +52,21 @@
 ### Status Update Phase 1
 
 - `Done`
-  Schema Supabase terpasang, seed awal 100 parfum berhasil masuk, endpoint `GET perfumes`, `GET perfume by ID`, dan `GET notes` sudah tersedia, serta landing/explore/detail/profile sudah ada.
-- `Partial`
-  Integrasi Supabase end-to-end masih dalam validasi untuk auth dan collections. Search/filter juga sudah berjalan, tetapi untuk saat ini hanya stabil pada field yang benar-benar tersedia di dataset seperti `search`, `gender`, dan `notes/accords`.
-- `Remaining`
-  Protected routes production-grade, validasi manual auth + profile + collections, dan bulk import setelah sanity check seed awal.
+  Frontend foundation, auth dasar, protected routes, schema Supabase, image metadata, dan seed dataset penuh sudah selesai. Data katalog di Supabase sekarang lengkap dan sinkron untuk kebutuhan browse, detail, koleksi user, dan fitur recommendation berikutnya.
+- `Scope Note`
+  Filter foundation mengikuti data nyata yang tersedia pada dataset saat ini. Field seperti `season`, `occasion`, `concentration`, `longevity`, dan `sillage` belum dipaksakan ke UI foundation karena belum punya sumber data yang konsisten.
 
-### Catatan Validasi Seed Awal
+### Catatan Validasi Seed Final
 
-Validasi otomatis terhadap hasil seed awal menunjukkan bahwa data publik di Supabase sudah terbaca dengan baik:
+Validasi akhir terhadap hasil seed penuh menunjukkan bahwa data publik di Supabase sudah lengkap:
 
-- `100 perfumes`
-- `135 notes`
-- `45 accords`
-- `622 perfume_notes`
-- `480 perfume_accords`
+- `70103 perfumes`
+- `1867 notes`
+- `88 accords`
+- `437781 perfume_notes`
+- `329093 perfume_accords`
 
-Ini berarti schema, relasi many-to-many, dan proses seed awal sudah berjalan sesuai rencana untuk foundation phase.
+Ini berarti schema, relasi many-to-many, image URL parfum, dan proses seed katalog penuh sudah berjalan sesuai rencana untuk foundation phase.
 
 ---
 

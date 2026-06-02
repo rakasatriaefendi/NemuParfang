@@ -4,12 +4,12 @@ import { AuthProvider } from '@/components/auth/AuthProvider';
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: 'NemuParfang — Premium AI Fragrance Discovery',
-  description: 'Skip the sniff, just click and pick! An elegant, minimal, and premium fragrance discovery platform powered by AI.',
+  title: 'NemuParfang - AI Fragrance Discovery',
+  description: 'Skip the sniff, just pick and click! Discover fragrances, notes, and accords with a calmer AI-assisted experience.',
   keywords: 'perfume, fragrance, scent, AI recommendation, fragrance discovery, notes, accords, unisex',
   openGraph: {
-    title: 'NemuParfang — Premium AI Fragrance Discovery',
-    description: 'Skip the sniff, just click and pick! An elegant, minimal, and premium fragrance discovery platform powered by AI.',
+    title: 'NemuParfang - AI Fragrance Discovery',
+    description: 'Skip the sniff, just pick and click! Discover fragrances, notes, and accords with a calmer AI-assisted experience.',
     type: 'website',
     url: 'https://nemuparfang.com',
     images: [
@@ -20,6 +20,12 @@ export const metadata = {
         alt: 'NemuParfang Scent Discovery',
       },
     ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NemuParfang - AI Fragrance Discovery',
+    description: 'Skip the sniff, just pick and click! Discover fragrances, notes, and accords with a calmer AI-assisted experience.',
+    images: ['/assets/og-image.webp'],
   },
 };
 
