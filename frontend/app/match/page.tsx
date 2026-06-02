@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Check, Sparkles } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { getAiMatch } from '@/lib/api/recommendations';
 import { MlMatchRequest } from '@/lib/types';
@@ -266,14 +266,20 @@ export default function MatchPage() {
                 </div>
                 <div className="space-y-3">
                   {activeInsight.notes && (
-                    <div className="rounded-2xl border border-parfang-border bg-parfang-bg px-4 py-4">
-                      <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-parfang-muted">Usually fits</p>
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-emerald-600" />
+                        <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-emerald-700">Usually fits</p>
+                      </div>
                       <p className="mt-2 font-body text-sm leading-relaxed text-parfang-text">{activeInsight.notes}</p>
                     </div>
                   )}
                   {activeInsight.caution && (
-                    <div className="rounded-2xl border border-parfang-border bg-parfang-bg px-4 py-4">
-                      <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-parfang-muted">Watch out</p>
+                    <div className="rounded-2xl border border-rose-200 bg-rose-50/80 px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-rose-600" />
+                        <p className="font-nav text-[10px] uppercase tracking-[0.16em] text-rose-700">Watch out</p>
+                      </div>
                       <p className="mt-2 font-body text-sm leading-relaxed text-parfang-text">{activeInsight.caution}</p>
                     </div>
                   )}

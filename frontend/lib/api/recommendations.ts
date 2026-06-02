@@ -12,24 +12,49 @@ export async function getAiMatch(input: MlMatchRequest): Promise<{
     method: 'POST',
     body: JSON.stringify(input),
   });
-  const perfumes = result.recommendations.map((item) => ({
-    id: String(item.id),
-    name: item.name,
-    brand: item.brand,
-    gender: item.gender === 'women' ? 'women' as const : item.gender === 'men' ? 'men' as const : 'unisex' as const,
-    occasions: [],
-    seasons: [],
-    notes: { top: [], middle: [], base: [] },
-    accords: item.accords.split(',').filter(Boolean).map((name, index) => ({ name: name.trim(), percentage: Math.max(25, 90 - index * 14) })),
-    longevity: 0,
-    sillage: 'moderate' as const,
-    description: `A curated match for your ${input.style} profile with ${input.preferred_accords.join(', ')} accords.`,
-    imageUrl: '/assets/perfume-placeholder.webp',
-    rating: item.rating,
-    reviewCount: item.review_count,
-    matchScore: toPercentage(item.match_score),
-    recommendationReason: `Selected for its ${item.accords.split(',').slice(0, 3).join(', ')} accord alignment and ${item.gender} profile.`,
-  }));
+
+  const perfumes = await Promise.all(
+    result.recommendations.map(async (item) => {
+      const hydrated = await getPerfumeById(String(item.id));
+      const accords = item.accords
+        .split(',')
+        .filter(Boolean)
+        .map((name, index) => ({ name: name.trim(), percentage: Math.max(25, 90 - index * 14) }));
+
+      if (hydrated) {
+        return {
+          ...hydrated,
+          rating: item.rating,
+          reviewCount: item.review_count,
+          matchScore: toPercentage(item.match_score),
+          recommendationReason: `Selected for its ${item.accords.split(',').slice(0, 3).join(', ')} accord alignment and ${item.gender} profile.`,
+          accords: hydrated.accords.length > 0 ? hydrated.accords : accords,
+          description:
+            hydrated.description ||
+            `A curated match for your ${input.style} profile with ${input.preferred_accords.join(', ')} accords.`,
+        } satisfies Perfume;
+      }
+
+      return {
+        id: String(item.id),
+        name: item.name,
+        brand: item.brand,
+        gender: item.gender === 'women' ? 'women' as const : item.gender === 'men' ? 'men' as const : 'unisex' as const,
+        occasions: [],
+        seasons: [],
+        notes: { top: [], middle: [], base: [] },
+        accords,
+        longevity: 0,
+        sillage: 'moderate' as const,
+        description: `A curated match for your ${input.style} profile with ${input.preferred_accords.join(', ')} accords.`,
+        imageUrl: '/assets/perfume-placeholder.webp',
+        rating: item.rating,
+        reviewCount: item.review_count,
+        matchScore: toPercentage(item.match_score),
+        recommendationReason: `Selected for its ${item.accords.split(',').slice(0, 3).join(', ')} accord alignment and ${item.gender} profile.`,
+      } satisfies Perfume;
+    })
+  );
   const counts = new Map<string, number>();
   perfumes.forEach((perfume) => perfume.accords.slice(0, 5).forEach((accord) => counts.set(accord.name, (counts.get(accord.name) || 0) + accord.percentage)));
   const total = Array.from(counts.values()).reduce((sum, value) => sum + value, 0) || 1;
