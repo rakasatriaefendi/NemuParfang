@@ -5,10 +5,9 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
-      allow: ['/','/about','/explore','/community','/match','/mood'],
+      allow: ['/'],
       disallow: ['/login', '/register', '/profile', '/favorites', '/wardrobe'],
     },
     sitemap: absoluteUrl('/sitemap.xml'),
-    host: absoluteUrl('/'),
   };
 }
