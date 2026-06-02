@@ -51,7 +51,7 @@ export const HeroSection = () => {
               variants={itemVariants}
               className="font-display text-4xl md:text-5xl lg:text-6xl text-parfang-text mb-6 leading-tight font-bold"
             >
-              Skip the sniff, just click and pick!.
+              Skip the sniff, just click and pick!
             </motion.h1>
             
             <motion.p

@@ -45,6 +45,11 @@ env/
 *.zip
 ENV/
 
+#docs
+*.pptx
+*.pdf
+/docs
+
 # Jupyter
 .ipynb_checkpoints/
 
