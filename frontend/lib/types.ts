@@ -131,6 +131,9 @@ export interface SupabasePerfumeRow {
   rating: number;
   review_count: number;
   release_year: number | null;
+  description?: string | null;
+  image_url?: string | null;
+  image_url_secondary?: string | null;
   perfumer_1: string | null;
   perfumer_2: string | null;
   perfume_accords?: {

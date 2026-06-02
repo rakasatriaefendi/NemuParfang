@@ -65,15 +65,18 @@ const mapSupabasePerfume = (item: SupabasePerfumeRow): Perfume => {
     accords: sortedAccords.map((name, index) => ({ name, percentage: Math.max(25, 90 - index * 14) })),
     longevity: 0,
     sillage: 'moderate',
-    description: `${item.name} by ${item.brand}. Explore its accord profile and olfactory pyramid to understand how the scent develops on skin.`,
-    imageUrl: fallbackImages[item.id % fallbackImages.length],
+    description:
+      item.description ||
+      `${item.name} by ${item.brand}. Explore its accord profile and olfactory pyramid to understand how the scent develops on skin.`,
+    imageUrl: item.image_url || fallbackImages[item.id % fallbackImages.length],
+    imageUrlSecondary: item.image_url_secondary || item.image_url || fallbackImages[item.id % fallbackImages.length],
     rating: item.rating,
     reviewCount: item.review_count,
   };
 };
 
 const supabaseSelect =
-  'id,name,brand,country,gender,rating,review_count,release_year,perfumer_1,perfumer_2,' +
+  'id,name,brand,country,gender,rating,review_count,release_year,description,image_url,image_url_secondary,perfumer_1,perfumer_2,' +
   'perfume_accords(position,accords(name)),' +
   'perfume_notes(position,note_type,notes(name))';
 
@@ -87,7 +90,7 @@ export async function getPerfumes(filters?: {
     const params = new URLSearchParams({
       select: supabaseSelect,
       order: 'review_count.desc',
-      limit: '24',
+      limit: '72',
     });
     if (filters?.search) {
       params.set('or', `(name.ilike.*${filters.search}*,brand.ilike.*${filters.search}*)`);
