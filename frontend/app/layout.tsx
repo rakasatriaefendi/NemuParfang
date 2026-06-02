@@ -7,6 +7,16 @@ export const metadata = {
   title: 'NemuParfang - AI Fragrance Discovery',
   description: 'Skip the sniff, just pick and click! Discover fragrances, notes, and accords with a calmer AI-assisted experience.',
   keywords: 'perfume, fragrance, scent, AI recommendation, fragrance discovery, notes, accords, unisex',
+  icons: {
+    icon: [
+      { url: '/assets/favicon_io/favicon.ico' },
+      { url: '/assets/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/assets/favicon_io/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/assets/favicon_io/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: ['/assets/favicon_io/favicon.ico'],
+  },
+  manifest: '/assets/favicon_io/site.webmanifest',
   openGraph: {
     title: 'NemuParfang - AI Fragrance Discovery',
     description: 'Skip the sniff, just pick and click! Discover fragrances, notes, and accords with a calmer AI-assisted experience.',

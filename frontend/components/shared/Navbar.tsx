@@ -61,7 +61,7 @@ export const Navbar = () => {
     { name: 'AI Match', href: '/match', icon: <Sparkles className="w-3.5 h-3.5 text-parfang-accent" /> },
     { name: 'Mood', href: '/mood', icon: <Wind className="w-3.5 h-3.5 text-parfang-accent" /> },
     { name: 'About', href: '#' },
-    { name: 'Blog', href: '#' },
+    { name: 'Community', href: '/community' },
   ];
 
   const megaMenuCategories = [

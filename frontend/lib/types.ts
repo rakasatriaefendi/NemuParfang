@@ -166,3 +166,30 @@ export interface ApiResponse<T> {
   error?: string;
   status: number;
 }
+
+export interface CommunityComment {
+  id: string;
+  userId: string;
+  authorDisplayName: string;
+  authorUsername?: string | null;
+  authorAvatarUrl?: string | null;
+  content: string;
+  createdAt: string;
+}
+
+export interface CommunityPost {
+  id: string;
+  userId: string;
+  authorDisplayName: string;
+  authorUsername?: string | null;
+  authorAvatarUrl?: string | null;
+  content?: string | null;
+  imageUrl?: string | null;
+  createdAt: string;
+  likeCount: number;
+  commentCount: number;
+  repostCount: number;
+  likedByViewer: boolean;
+  repostedByViewer: boolean;
+  comments: CommunityComment[];
+}
