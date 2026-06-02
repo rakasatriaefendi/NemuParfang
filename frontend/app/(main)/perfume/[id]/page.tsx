@@ -30,6 +30,8 @@ export default function PerfumeDetailPage() {
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
   const [reviewDraft, setReviewDraft] = useState({ rating: 0, content: '' });
   const [reviewError, setReviewError] = useState('');
+  const [reviewLoadError, setReviewLoadError] = useState('');
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [isEditingReview, setIsEditingReview] = useState(false);
 
@@ -65,14 +67,19 @@ export default function PerfumeDetailPage() {
     let active = true;
 
     const fetchReviews = async () => {
+      setIsLoadingReviews(true);
+      setReviewLoadError('');
       try {
         const nextReviews = await loadReviews(id, session?.user.id);
         if (active) {
           setReviews(nextReviews);
+          setIsLoadingReviews(false);
         }
       } catch {
         if (active) {
           setReviews([]);
+          setReviewLoadError('We could not load community reviews right now.');
+          setIsLoadingReviews(false);
         }
       }
     };
@@ -110,8 +117,16 @@ export default function PerfumeDetailPage() {
   }, [currentUserReview?.id, session]);
 
   const refreshReviews = async () => {
-    const nextReviews = await loadReviews(id, session?.user.id);
-    setReviews(nextReviews);
+    setIsLoadingReviews(true);
+    setReviewLoadError('');
+    try {
+      const nextReviews = await loadReviews(id, session?.user.id);
+      setReviews(nextReviews);
+    } catch {
+      setReviewLoadError('We could not refresh reviews right now.');
+    } finally {
+      setIsLoadingReviews(false);
+    }
   };
 
   const handleSubmitReview = async () => {
@@ -355,8 +370,8 @@ export default function PerfumeDetailPage() {
                   <span className="font-label-caps text-[10px] uppercase tracking-wider text-parfang-accent font-semibold">
                     Your Review
                   </span>
-                  <div className="mt-4 flex items-start justify-between gap-4">
-                    <div>
+                  <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
                       <div className="flex items-center gap-3">
                         <ReviewStars value={currentUserReview.rating} size={18} />
                         <span className="font-body text-xs text-parfang-muted">{currentUserReview.date}</span>
@@ -365,15 +380,15 @@ export default function PerfumeDetailPage() {
                         {currentUserReview.content}
                       </p>
                     </div>
-                    <div className="flex shrink-0 gap-2">
-                      <Button variant="secondary" onClick={() => setIsEditingReview(true)}>
+                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:shrink-0">
+                      <Button variant="secondary" onClick={() => setIsEditingReview(true)} className="w-full sm:w-auto">
                         Edit Review
                       </Button>
                       <Button
                         variant="secondary"
                         onClick={handleDeleteReview}
                         disabled={isSubmittingReview}
-                        className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                        className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 sm:w-auto"
                       >
                         Delete
                       </Button>
@@ -465,7 +480,22 @@ export default function PerfumeDetailPage() {
                 </div>
               )}
 
-              {communityReviews.length === 0 ? (
+              {isLoadingReviews ? (
+                <div className="space-y-4">
+                  {[...Array(2)].map((_, index) => (
+                    <div key={index} className="h-28 animate-pulse rounded-xl border border-parfang-border bg-parfang-surface" />
+                  ))}
+                </div>
+              ) : reviewLoadError ? (
+                <div className="rounded-xl border border-parfang-border bg-parfang-surface p-8 text-center">
+                  <p className="font-body text-sm text-parfang-muted">{reviewLoadError}</p>
+                  <div className="mt-4">
+                    <Button variant="secondary" onClick={refreshReviews}>
+                      Try again
+                    </Button>
+                  </div>
+                </div>
+              ) : communityReviews.length === 0 ? (
                 <div className="p-8 border border-parfang-border rounded-xl bg-parfang-surface text-center text-parfang-muted">
                   No community reviews submitted yet for this fragrance.
                 </div>

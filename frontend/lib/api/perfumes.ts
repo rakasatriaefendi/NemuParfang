@@ -89,10 +89,11 @@ export interface PerfumePageResult {
 }
 
 interface PerfumeFilters {
-  occasion?: string;
   note?: string;
   gender?: string;
   search?: string;
+  brand?: string;
+  sortBy?: 'rating' | 'reviews' | 'latest' | 'az';
 }
 
 const filterByNote = (perfumes: Perfume[], note?: string) => {
@@ -112,14 +113,27 @@ export async function getPerfumesPage(
 ): Promise<PerfumePageResult> {
   const page = Math.max(1, filters?.page || 1);
   const pageSize = Math.max(1, filters?.pageSize || 24);
+  const sortBy = filters?.sortBy || 'reviews';
+
+  const sortOrder =
+    sortBy === 'rating'
+      ? 'rating.desc'
+      : sortBy === 'latest'
+        ? 'release_year.desc.nullslast'
+        : sortBy === 'az'
+          ? 'name.asc'
+          : 'review_count.desc';
 
   if (hasSupabasePublicConfig()) {
     const params = new URLSearchParams({
       select: supabaseSelect,
-      order: 'review_count.desc',
+      order: sortOrder,
     });
     if (filters?.search) {
       params.set('or', `(name.ilike.*${filters.search}*,brand.ilike.*${filters.search}*)`);
+    }
+    if (filters?.brand) {
+      params.set('brand', `ilike.*${filters.brand}*`);
     }
     if (filters?.gender && filters.gender !== 'All') {
       const gender = filters.gender === 'female' ? 'women' : filters.gender === 'male' ? 'men' : filters.gender;
@@ -164,6 +178,8 @@ export async function getPerfumesPage(
   const params = new URLSearchParams({ page_size: String(pageSize), page: String(page) });
   if (filters?.search) params.set('search', filters.search);
   if (filters?.note && filters.note !== 'All') params.set('accord', filters.note);
+  if (filters?.brand) params.set('brand', filters.brand);
+  if (filters?.sortBy) params.set('sort', filters.sortBy);
   if (filters?.gender && filters.gender !== 'All') {
     params.set('gender', filters.gender === 'female' ? 'women' : filters.gender === 'male' ? 'men' : filters.gender);
   }
@@ -176,7 +192,27 @@ export async function getPerfumesPage(
       pageSize: response.page_size,
     };
   } catch {
-    const filtered = filterByNote(MOCK_PERFUMES, filters?.note);
+    let filtered = filterByNote(MOCK_PERFUMES, filters?.note);
+    if (filters?.search) {
+      const needle = filters.search.toLowerCase();
+      filtered = filtered.filter((perfume) =>
+        perfume.name.toLowerCase().includes(needle) || perfume.brand.toLowerCase().includes(needle)
+      );
+    }
+    if (filters?.brand) {
+      const needle = filters.brand.toLowerCase();
+      filtered = filtered.filter((perfume) => perfume.brand.toLowerCase().includes(needle));
+    }
+    if (filters?.gender && filters.gender !== 'All') {
+      const gender = filters.gender === 'female' ? 'women' : filters.gender === 'male' ? 'men' : filters.gender;
+      filtered = filtered.filter((perfume) => perfume.gender === gender);
+    }
+    filtered = [...filtered].sort((left, right) => {
+      if (sortBy === 'rating') return right.rating - left.rating || right.reviewCount - left.reviewCount;
+      if (sortBy === 'latest') return (right.year || 0) - (left.year || 0);
+      if (sortBy === 'az') return left.name.localeCompare(right.name);
+      return right.reviewCount - left.reviewCount;
+    });
     const from = (page - 1) * pageSize;
     const items = filtered.slice(from, from + pageSize);
     return {
