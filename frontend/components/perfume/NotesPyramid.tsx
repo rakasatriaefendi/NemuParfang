@@ -17,6 +17,11 @@ type LayerType = 'top' | 'middle' | 'base' | null;
 
 export const NotesPyramid: React.FC<NotesPyramidProps> = ({ notes }) => {
   const [activeLayer, setActiveLayer] = useState<LayerType>(null);
+  const totalNotes = notes.top.length + notes.middle.length + notes.base.length;
+  const hasCompletePyramid = notes.top.length > 0 && notes.middle.length > 0 && notes.base.length > 0;
+
+  const defaultAvailableLayer: LayerType =
+    notes.top.length > 0 ? 'top' : notes.middle.length > 0 ? 'middle' : notes.base.length > 0 ? 'base' : null;
 
   const layerInfo = {
     top: {
@@ -45,6 +50,19 @@ export const NotesPyramid: React.FC<NotesPyramidProps> = ({ notes }) => {
     },
   };
 
+  if (totalNotes === 0) {
+    return (
+      <div className="w-full rounded-2xl border border-parfang-border/50 bg-parfang-surface p-6 shadow-sm">
+        <div className="text-left">
+          <h4 className="font-headline-sm text-base text-parfang-text">Olfactory breakdown unavailable</h4>
+          <p className="mt-2 font-body text-sm leading-relaxed text-parfang-muted">
+            This fragrance does not have a detailed top, heart, and base note breakdown in the current dataset yet.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex flex-col md:flex-row gap-8 items-center bg-parfang-surface p-6 rounded-2xl border border-parfang-border/50 shadow-sm">
       {/* SVG Pyramid Graphic */}
@@ -71,8 +89,8 @@ export const NotesPyramid: React.FC<NotesPyramidProps> = ({ notes }) => {
 
           {/* Top Layer */}
           <g
-            className="cursor-pointer"
-            onMouseEnter={() => setActiveLayer('top')}
+            className={notes.top.length > 0 ? 'cursor-pointer' : 'cursor-default opacity-45'}
+            onMouseEnter={() => notes.top.length > 0 && setActiveLayer('top')}
             onMouseLeave={() => setActiveLayer(null)}
           >
             <path
@@ -97,8 +115,8 @@ export const NotesPyramid: React.FC<NotesPyramidProps> = ({ notes }) => {
 
           {/* Middle/Heart Layer */}
           <g
-            className="cursor-pointer"
-            onMouseEnter={() => setActiveLayer('middle')}
+            className={notes.middle.length > 0 ? 'cursor-pointer' : 'cursor-default opacity-45'}
+            onMouseEnter={() => notes.middle.length > 0 && setActiveLayer('middle')}
             onMouseLeave={() => setActiveLayer(null)}
           >
             <path
@@ -123,8 +141,8 @@ export const NotesPyramid: React.FC<NotesPyramidProps> = ({ notes }) => {
 
           {/* Base Layer */}
           <g
-            className="cursor-pointer"
-            onMouseEnter={() => setActiveLayer('base')}
+            className={notes.base.length > 0 ? 'cursor-pointer' : 'cursor-default opacity-45'}
+            onMouseEnter={() => notes.base.length > 0 && setActiveLayer('base')}
             onMouseLeave={() => setActiveLayer(null)}
           >
             <path
@@ -175,12 +193,38 @@ export const NotesPyramid: React.FC<NotesPyramidProps> = ({ notes }) => {
           </div>
         ) : (
           <div className="text-center md:text-left w-full">
-            <h4 className="font-headline-sm text-base text-parfang-text mb-2">
-              Interactive Olfactory Pyramid
-            </h4>
-            <p className="font-body text-xs text-parfang-muted leading-relaxed">
-              Hover over each tier of the pyramid to reveal the specific scent ingredients. Top, Heart, and Base notes compile a perfume's lifecycle.
-            </p>
+            {hasCompletePyramid ? (
+              <>
+                <h4 className="font-headline-sm text-base text-parfang-text mb-2">
+                  Interactive Olfactory Pyramid
+                </h4>
+                <p className="font-body text-xs text-parfang-muted leading-relaxed">
+                  Hover over each tier of the pyramid to reveal the specific scent ingredients. Top, Heart, and Base notes compile a perfume's lifecycle.
+                </p>
+              </>
+            ) : defaultAvailableLayer ? (
+              <>
+                <div className="flex items-center gap-2 mb-2">
+                  {layerInfo[defaultAvailableLayer].icon}
+                  <h4 className="font-headline-sm text-base text-parfang-text">
+                    Partial note breakdown
+                  </h4>
+                </div>
+                <p className="font-body text-xs text-parfang-muted leading-relaxed mb-4">
+                  This fragrance does not include a complete pyramid in the current dataset. Available notes are shown below.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {layerInfo[defaultAvailableLayer].items.map((note) => (
+                    <span
+                      key={note}
+                      className="bg-parfang-bg px-3.5 py-1.5 rounded-full font-body text-xs text-parfang-text border border-parfang-border/50 font-medium"
+                    >
+                      {note}
+                    </span>
+                  ))}
+                </div>
+              </>
+            ) : null}
           </div>
         )}
       </div>

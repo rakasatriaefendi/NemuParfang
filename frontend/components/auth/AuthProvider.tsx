@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AuthSession } from '@/lib/api/auth';
-import { loadCollections, persistCollection } from '@/lib/api/collections';
+import { CollectionRequestError, loadCollections, persistCollection } from '@/lib/api/collections';
 import { loadProfile } from '@/lib/api/profile';
 import { ProfileRecord } from '@/lib/types';
 
@@ -77,15 +77,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (!session) return;
-    loadCollections(session).then((rows) => {
-      if (!rows) return;
-      const remoteFavorites = rows.filter((row) => row.collection_type === 'favorite').map((row) => row.perfume_id);
-      const remoteWardrobe = rows.filter((row) => row.collection_type === 'wardrobe').map((row) => row.perfume_id);
-      setFavorites(remoteFavorites);
-      setWardrobe(remoteWardrobe);
-      window.localStorage.setItem('nemuparfang-favorites', JSON.stringify(remoteFavorites));
-      window.localStorage.setItem('nemuparfang-wardrobe', JSON.stringify(remoteWardrobe));
-    });
+    loadCollections(session)
+      .then((rows) => {
+        if (!rows) return;
+        const remoteFavorites = rows.filter((row) => row.collection_type === 'favorite').map((row) => row.perfume_id);
+        const remoteWardrobe = rows.filter((row) => row.collection_type === 'wardrobe').map((row) => row.perfume_id);
+        setFavorites(remoteFavorites);
+        setWardrobe(remoteWardrobe);
+        window.localStorage.setItem('nemuparfang-favorites', JSON.stringify(remoteFavorites));
+        window.localStorage.setItem('nemuparfang-wardrobe', JSON.stringify(remoteWardrobe));
+      })
+      .catch((error) => {
+        if (error instanceof CollectionRequestError && error.status === 401) {
+          setSession(null);
+        }
+      });
   }, [session?.user.id, session?.accessToken]);
 
   const setSession = (next: AuthSession | null) => {
@@ -123,9 +129,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (session) {
         void persistCollection(session, id, collectionType, next.includes(id))
-          .catch(() => {
+          .catch((error) => {
             setter(previous);
             window.localStorage.setItem(key, JSON.stringify(previous));
+            if (error instanceof CollectionRequestError && error.status === 401) {
+              setSession(null);
+            }
           })
           .finally(() => {
             pendingRef.current.delete(id);
